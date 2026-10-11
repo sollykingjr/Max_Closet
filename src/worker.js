@@ -61,6 +61,7 @@ function toItem(r) {
     url: r.url || "",
     rating: r.rating == null ? null : r.rating,
     look: r.look || "",
+    qty: r.qty || 1,
     photoV: r.photo_v || null,
   };
 }
@@ -88,6 +89,7 @@ function cleanItem(id, b) {
     url: str(b.url, 500),
     rating: ratingOrNull(b.rating),
     look: str(b.look, 600),
+    qty: Math.min(99, Math.max(1, parseInt(b.qty, 10) || 1)),
   };
 }
 const ratingOrNull = (v) => {
@@ -95,14 +97,14 @@ const ratingOrNull = (v) => {
   return n >= 1 && n <= 5 ? n : null;
 };
 
-const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","updated_at"];
+const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","qty","updated_at"];
 const UPSERT =
   "INSERT INTO items (" + COLS.join(",") + ") VALUES (" + COLS.map(() => "?").join(",") + ") " +
   "ON CONFLICT(id) DO UPDATE SET " + COLS.slice(1).map((c) => c + "=excluded." + c).join(",");
 
 const itemBinds = (c) => [
   c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
-  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, Date.now(),
+  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, c.qty, Date.now(),
 ];
 const upsertStmt = (env, c) => env.DB.prepare(UPSERT).bind(...itemBinds(c));
 
@@ -130,6 +132,7 @@ async function init(env) {
   const { results: cols } = await env.DB.prepare("SELECT name FROM pragma_table_info('items')").all();
   const have = new Set(cols.map((c) => c.name));
   if (!have.has("rating")) await env.DB.prepare("ALTER TABLE items ADD COLUMN rating INTEGER").run();
+  if (!have.has("qty")) await env.DB.prepare("ALTER TABLE items ADD COLUMN qty INTEGER").run();
   if (!have.has("look")) await env.DB.prepare("ALTER TABLE items ADD COLUMN look TEXT").run();
 
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
@@ -328,7 +331,7 @@ const closetLines = (items, ws = {}, today = "") =>
     const st = ws[i.id] || { n: 0, last: "" };
     const last = st.last && today ? daysBetween(st.last, today) + " days ago" : "no recent record";
     return [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "",
-      i.rating ? i.rating + "/5" : "unrated", st.n + " wears", "last worn " + last].join(" | ");
+      i.rating ? i.rating + "/5" : "unrated", (i.qty > 1 ? "own " + i.qty + " " : "") + st.n + " wears", "last worn " + last].join(" | ");
   }).join("\n");
 
 const knownLines = (items) =>

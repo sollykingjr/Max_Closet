@@ -175,6 +175,7 @@ header.top{padding-block:10px 6px}
   .dockrow .btn{flex:none;min-width:200px}
   .otiles{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 }
+.qty{position:absolute;left:6px;bottom:6px;background:var(--ink);color:var(--bg);font:600 12px var(--font-data);padding:2px 7px;border-radius:999px}
 </style>
 </head><body>
 <div class="wrap">
@@ -269,6 +270,7 @@ header.top{padding-block:10px 6px}
       <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
       <label>Category<select id="f-cat"></select></label>
     </div>
+    <label>How many do I own<input id="f-qty" inputmode="numeric" placeholder="1"></label>
     <label>Description (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
     <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
     <div class="grid2">
@@ -342,7 +344,8 @@ function label(i){return (i.brand?i.brand+" ":"")+i.name}
 function itemById(id){return state.items.filter(function(i){return i.id===id})[0]}
 function itemName(id){var i=itemById(id);return i?label(i):null}
 function wearsOf(it){return (state.ws[it.id]&&state.ws[it.id].n)||0}
-function cpwOf(it){var n=wearsOf(it);return(it.paid>0&&n>0)?it.paid/n:null}
+function qtyOf(it){return it.qty>1?it.qty:1}
+function cpwOf(it){var n=wearsOf(it);return(it.paid>0&&n>0)?it.paid*qtyOf(it)/n:null}
 function photoUrl(it,full){return "/api/photo/"+encodeURIComponent(it.id)+"?v="+it.photoV+(full?"&size=full":"")}
 
 /* ---------- storage (Cloudflare D1 through /api) ---------- */
@@ -450,7 +453,7 @@ function sortItems(items,mode){
 function tileHtml(it){
   var on=!!state.sel[it.id];
   var img=it.photoV?'<img loading="lazy" alt="" src="'+photoUrl(it)+'">':'<span class="ttext">'+esc(it.name)+'</span>';
-  return '<button type="button" class="tile" data-id="'+esc(it.id)+'" aria-pressed="'+on+'"><span class="timg">'+img+'<span class="tick" aria-hidden="true">✓</span></span>'+
+  return '<button type="button" class="tile" data-id="'+esc(it.id)+'" aria-pressed="'+on+'"><span class="timg">'+img+'<span class="tick" aria-hidden="true">✓</span>'+(qtyOf(it)>1?'<span class="qty">×'+qtyOf(it)+'</span>':'')+'</span>'+
     '<span class="tname">'+esc(it.photoV?label(it):(it.brand||it.name))+'</span><span class="tmeta">'+(it.rating?stars(it.rating).slice(0,it.rating):"")+(wearsOf(it)&&state.sort==="worn"?" "+wearsOf(it)+"×":"")+'</span></button>';
 }
 function bindTiles(el){Array.prototype.forEach.call(el.querySelectorAll(".tile"),function(b){b.onclick=function(){
@@ -520,7 +523,7 @@ function renderWears(){
   var owned=state.items.filter(function(i){return i.status==="closet"});
   var worn=owned.filter(function(i){return wearsOf(i)>0}),never=owned.filter(function(i){return wearsOf(i)===0});
   var total=0;state.wears.forEach(function(w){total+=w.count*w.itemIds.length});
-  var spent=0,spentWorn=0;owned.forEach(function(i){if(i.paid>0){spent+=i.paid;if(wearsOf(i)>0)spentWorn+=i.paid}});
+  var spent=0,spentWorn=0;owned.forEach(function(i){if(i.paid>0){spent+=i.paid*qtyOf(i);if(wearsOf(i)>0)spentWorn+=i.paid*qtyOf(i)}});
   var html='<p class="note" style="margin:0">'+worn.length+' pieces worn · '+never.length+' never worn'+(spent?' · '+esc(money2(spent))+' paid for what you own':'')+'</p>';
   var ranked=owned.filter(function(i){return cpwOf(i)!=null}).sort(function(a,b){return cpwOf(a)-cpwOf(b)});
   if(ranked.length){
@@ -612,7 +615,7 @@ function refreshSheetStats(){
   var it=itemById(state.editing);if(!it)return;
   var n=wearsOf(it),c=cpwOf(it),last=state.ws[it.id]&&state.ws[it.id].last;
   var paidNow=num($("f-paid").value);
-  var cp=(paidNow>0&&n>0)?paidNow/n:null;
+  var qn=parseInt($("f-qty").value,10)||1;var cp=(paidNow>0&&n>0)?paidNow*qn/n:null;
   $("wear-stats").innerHTML='<span><b>'+n+'</b> '+(n===1?"wear":"wears")+'</span><span><b>'+(cp!=null?money2(cp):"—")+'</b> per wear</span>'+(last?'<span>last worn <b>'+esc(niceDate(last))+'</b></span>':'');
 }
 function openSheet(id,preset){
@@ -629,7 +632,7 @@ function openSheet(id,preset){
   $("f-name").value=d.name||"";$("f-brand").value=d.brand||"";$("f-cat").value=d.cat||"";$("f-status").value=d.status||"try";
   $("f-size").value=d.size||"";$("f-max").value=d.maxPrice!=null?d.maxPrice:"";$("f-paid").value=d.paid!=null?d.paid:"";
   $("f-colors").value=(d.colors||[]).join(", ");$("f-subs").value=(d.subs||[]).join(", ");$("f-fabric").value=d.fabric||"";$("f-note").value=d.note||"";
-  $("f-look").value=d.look||"";
+  $("f-look").value=d.look||"";$("f-qty").value=d.qty>1?d.qty:"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
   state.fillShot="";$("fill-box").hidden=!!it;
@@ -642,7 +645,7 @@ function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
   var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
     size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),note:$("f-note").value.trim(),
-    look:$("f-look").value.trim(),rating:state.sheet.rating};
+    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1};
   var mx=num($("f-max").value),pd=num($("f-paid").value);
   if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
   var cur=state.editing&&itemById(state.editing);if(cur&&cur.url)d.url=cur.url;
@@ -828,7 +831,7 @@ $("occasion").addEventListener("input",function(){state.occ="";renderAnchor()});
 $("f-photo").onchange=function(){pickPhoto(this.files&&this.files[0]);this.value=""};
 $("p-remove").onclick=function(){state.sheet.photo=null;state.sheet.removePhoto=true;renderPhotoBox()};
 $("p-describe").onclick=function(){describePhoto(state.editing,false)};
-$("f-paid").addEventListener("input",refreshSheetStats);
+$("f-paid").addEventListener("input",refreshSheetStats);$("f-qty").addEventListener("input",refreshSheetStats);
 $("wore-today").onclick=function(){
   if(!state.editing)return;var b=this;b.disabled=true;
   addWear({itemIds:[state.editing],kind:"outfit",date:today(),count:1}).then(function(){$("wear-msg").textContent="Logged for today."}).catch(function(e){$("wear-msg").textContent=errCopy(e)}).then(function(){b.disabled=false});
