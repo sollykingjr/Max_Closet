@@ -1,0 +1,2561 @@
+[
+ {
+  "id": "a001",
+  "name": "Wyatt Shirt - Platinum Etch",
+  "brand": "Rails",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Grey",
+   "White"
+  ],
+  "size": "XL",
+  "status": "approved",
+  "note": "100% Cotton",
+  "paid": 148.0
+ },
+ {
+  "id": "a002",
+  "name": "6-Inch Saturday Beach Shorts",
+  "brand": "Marine Layer",
+  "cat": "Shorts",
+  "subs": [
+   "Shorts"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "L",
+  "status": "approved",
+  "note": "Awesome. Just need it to be cheaper",
+  "paid": 98.0
+ },
+ {
+  "id": "a003",
+  "name": "Comfort Terry Pant in Taupe",
+  "brand": "The Normal Brand",
+  "cat": "Pants",
+  "subs": [
+   "Stretch",
+   "Terry"
+  ],
+  "colors": [
+   "Beige"
+  ],
+  "size": "36x30",
+  "status": "approved",
+  "note": "Bought from Nordstrom to try on. Comfortable. A little weird around the crotch. Slim was wide legged pants. Thin material. Not against getting at a big sale",
+  "paid": 148.0
+ },
+ {
+  "id": "c001",
+  "name": "Reversible and Adjustable Gancini Belt",
+  "brand": "Ferragamo",
+  "cat": "Accessories",
+  "subs": [
+   "Belts"
+  ],
+  "colors": [
+   "Black",
+   "Brown"
+  ],
+  "size": "38\"",
+  "status": "closet",
+  "note": "Birthday present"
+ },
+ {
+  "id": "c002",
+  "name": "Leather Belt - Black",
+  "brand": "Etsy",
+  "cat": "Accessories",
+  "subs": [
+   "Belts"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "38\"",
+  "status": "closet",
+  "note": "",
+  "paid": 40.0
+ },
+ {
+  "id": "c003",
+  "name": "Durand - Crystal Wide",
+  "brand": "Warby Parker",
+  "cat": "Accessories",
+  "subs": [
+   "Sunglasses"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "",
+  "status": "closet",
+  "note": "",
+  "paid": 165.0
+ },
+ {
+  "id": "c004",
+  "name": "Casual Stretch Belt - Navy",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Accessories",
+  "subs": [
+   "Belts"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "38\"",
+  "status": "closet",
+  "note": "",
+  "paid": 50.0
+ },
+ {
+  "id": "c005",
+  "name": "Silk Grenadine Italian Tie - Navy",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Accessories",
+  "subs": [
+   "Tie"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "One-Size",
+  "status": "closet",
+  "note": "",
+  "paid": 65.0
+ },
+ {
+  "id": "c006",
+  "name": "Shorelite Lined Trunk (7\")",
+  "brand": "Faherty",
+  "cat": "Bathing Suit",
+  "subs": [],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 31.0
+ },
+ {
+  "id": "c007",
+  "name": "Inlet Slim Fit Knit Blazer",
+  "brand": "Faherty",
+  "cat": "Blazer",
+  "subs": [
+   "Blazer"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 228.0
+ },
+ {
+  "id": "c008",
+  "name": "Movement Field Jacket",
+  "brand": "Faherty",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 159.0
+ },
+ {
+  "id": "c009",
+  "name": "Reserve Knit Coat",
+  "brand": "Faherty",
+  "cat": "Outerwear",
+  "subs": [
+   "Coat"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Hanukkah present",
+  "paid": 240.0
+ },
+ {
+  "id": "c010",
+  "name": "Powder Lite Winter Jacket",
+  "brand": "Columbia",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c011",
+  "name": "Wyndham Parka Black Label - Black",
+  "brand": "Canada Goose",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 1399.0
+ },
+ {
+  "id": "c012",
+  "name": "Slim Traveler Pant - Grey",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c013",
+  "name": "ABC Jogger - Navy",
+  "brand": "Lululemon",
+  "cat": "Pants",
+  "subs": [
+   "Joggers"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c014",
+  "name": "Slim Rapid Movement Chinos - Olive",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Chinos"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c015",
+  "name": "Slim Traveler Pant - Brown",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 65.0
+ },
+ {
+  "id": "c016",
+  "name": "Corduroy Sweatpants",
+  "brand": "Faherty",
+  "cat": "Pants",
+  "subs": [
+   "Sweatpants"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 27.0
+ },
+ {
+  "id": "c017",
+  "name": "Slim Traveler Pant - Navy",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c018",
+  "name": "Fleece Sweatpants - Green",
+  "brand": "Faherty",
+  "cat": "Pants",
+  "subs": [
+   "Sweatpants"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 25.0
+ },
+ {
+  "id": "c019",
+  "name": "Slim Rapid Movement Chinos - Black",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Chinos"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c020",
+  "name": "Slim Traveler Pant - Dark Olive Green",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c021",
+  "name": "Slim Linen-Cotton Traveler Pant - Khaki Beige",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler",
+   "Linen"
+  ],
+  "colors": [
+   "Beige"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 64.0
+ },
+ {
+  "id": "c022",
+  "name": "ABC Jogger - Grey",
+  "brand": "Lululemon",
+  "cat": "Pants",
+  "subs": [
+   "Joggers"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c023",
+  "name": "Slim Rapid Movement Chinos - Navy",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Chinos"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c024",
+  "name": "Slim Luxe Traveler Jean - Medium Wash",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Jeans"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 66.0
+ },
+ {
+  "id": "c025",
+  "name": "Jeans",
+  "brand": "rag & bone",
+  "cat": "Pants",
+  "subs": [
+   "Jeans"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c026",
+  "name": "Slim Heather Traveler Pant - Grey",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 84.0
+ },
+ {
+  "id": "c027",
+  "name": "Slim Heather Traveler Pant - Heather Brown",
+  "brand": "Banana Republic",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 84.0
+ },
+ {
+  "id": "c028",
+  "name": "Warren Stretch Slim Jeans in Clean Rinse",
+  "brand": "Quince",
+  "cat": "Pants",
+  "subs": [
+   "Jeans"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "36x30",
+  "status": "closet",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "c029",
+  "name": "Warren Stretch Straight Jeans - Black",
+  "brand": "Quince",
+  "cat": "Pants",
+  "subs": [
+   "Jeans"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "35\"",
+  "status": "closet",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "c030",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 1)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c031",
+  "name": "Precision Tee - Black",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c032",
+  "name": "Short-Sleeve Linen - Blue-White Striped",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Blue",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c033",
+  "name": "Long-Sleeve Newport Cloud Henley - Charcoal",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Long Sleeve"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c034",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 2)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c035",
+  "name": "Movement Shirt - Berry Plaid",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Purple",
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 12.0
+ },
+ {
+  "id": "c036",
+  "name": "Shoreline UPF Tee",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt",
+   "Workout"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Purchased for Japan",
+  "paid": 38.0
+ },
+ {
+  "id": "c037",
+  "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt (black, 1)",
+  "brand": "Banana Republic",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 25.0
+ },
+ {
+  "id": "c038",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 3)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c039",
+  "name": "Cloud Polo - Orange - Blue Stripes",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "Orange"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 55.0
+ },
+ {
+  "id": "c040",
+  "name": "Cashmere Quarter-Zip Sweater - Coal",
+  "brand": "Bloomingdale's",
+  "cat": "Shirt",
+  "subs": [
+   "Quarter Zip",
+   "Cashmere"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c041",
+  "name": "Regular Fit Textured-Knit Polo Shirt",
+  "brand": "H&M",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 35.0
+ },
+ {
+  "id": "c042",
+  "name": "Crown Comfort Quarter-Zip Pullover",
+  "brand": "Peter Millar",
+  "cat": "Shirt",
+  "subs": [
+   "Quarter Zip"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c043",
+  "name": "Cashmere Quarter-Zip Sweater - Navy",
+  "brand": "Bloomingdale's",
+  "cat": "Shirt",
+  "subs": [
+   "Quarter Zip",
+   "Cashmere"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c044",
+  "name": "Long-Sleeve Newport Cloud Henley - Ivory",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Long Sleeve"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 43.0
+ },
+ {
+  "id": "c045",
+  "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt - Blue Gray",
+  "brand": "Banana Republic",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 25.0
+ },
+ {
+  "id": "c046",
+  "name": "Movement Shirt - Blue White Plaid",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Blue",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "c047",
+  "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt (black, 2)",
+  "brand": "Banana Republic",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 25.0
+ },
+ {
+  "id": "c048",
+  "name": "Flowknit Breeze Performance Tee - Charcoal",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Workout",
+   "Performance"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 20.0
+ },
+ {
+  "id": "c049",
+  "name": "Sunwashed Midweight Organic Hoodie",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Sweatshirt"
+  ],
+  "colors": [
+   "Pink"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 31.0
+ },
+ {
+  "id": "c050",
+  "name": "Movement Shirt - Grey Sky Gingham",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Grey",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 68.0
+ },
+ {
+  "id": "c051",
+  "name": "Blue Plaid Button Down",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Blue",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 54.0
+ },
+ {
+  "id": "c052",
+  "name": "Precision Tee - Grey",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c053",
+  "name": "Movement Shirt Classic Fit - Atlantic Sky",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 63.0
+ },
+ {
+  "id": "c054",
+  "name": "Button-Down Collar Stretch Washed Oxford Shirt - White",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Shirt",
+  "subs": [
+   "Oxford",
+   "Button Down"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 33.0
+ },
+ {
+  "id": "c055",
+  "name": "Midweight Cotton T-Shirt - Heather Grey",
+  "brand": "Banana Republic Factory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 16.0
+ },
+ {
+  "id": "c056",
+  "name": "Pure Linen Shirt - Oatmeal",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Linen"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 33.0
+ },
+ {
+  "id": "c057",
+  "name": "100% Pima Cotton Luxe Touch Tee - Faded Indigo",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 20.0
+ },
+ {
+  "id": "c058",
+  "name": "Flowknit Breeze Performance Tee - Heather Black",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Workout",
+   "Performance"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 20.0
+ },
+ {
+  "id": "c059",
+  "name": "Precision Tee - Eclipse",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c060",
+  "name": "California Oxford Shirt - Charcoal",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Oxford"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Great shirt. One of my everyday wears now.",
+  "paid": 103.0
+ },
+ {
+  "id": "c061",
+  "name": "Stretch Oxford Shirt",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Oxford"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 40.0
+ },
+ {
+  "id": "c062",
+  "name": "Flame Classic Fit Short Sleeve Tee - Navy",
+  "brand": "rag & bone",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 90.0
+ },
+ {
+  "id": "c063",
+  "name": "Classic Stretch Selvage Shirt",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Love this shirt. Heavier and almost sweater like but doesn't really make me sweat. Big fan. Definitely a little boxy/wide so not really business casual",
+  "paid": 85.0
+ },
+ {
+  "id": "c064",
+  "name": "Henley T-Shirt - Orange",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Orange"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c065",
+  "name": "Tyrwhitt Pique Polo - Navy",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 33.0
+ },
+ {
+  "id": "c066",
+  "name": "Bron Polo - Cosmos Slub Cotton - Pink",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "Pink"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": "",
+  "paid": 75.0
+ },
+ {
+  "id": "c067",
+  "name": "Movement Shirt - Black White Gingham",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "White",
+   "Black"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 40.0
+ },
+ {
+  "id": "c068",
+  "name": "Essential T-Shirt",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": "",
+  "paid": 15.0
+ },
+ {
+  "id": "c069",
+  "name": "Button-Down Collar Stretch Washed Oxford Shirt - Sky Blue",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Shirt",
+  "subs": [
+   "Oxford",
+   "Button Down"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 33.0
+ },
+ {
+  "id": "c070",
+  "name": "Relaxed Heavy Slub Tee - Dusty Olive",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Good weight. Solid shirt",
+  "paid": 48.0
+ },
+ {
+  "id": "c071",
+  "name": "Henley T-Shirt - Red",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Red"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c072",
+  "name": "Long-Sleeve Newport Cloud Henley - Light Blue Heather",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Long Sleeve"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 38.0
+ },
+ {
+  "id": "c073",
+  "name": "Cloud Cotton Polo - Red",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "Red"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c074",
+  "name": "Bron Polo - Cosmos Slub Cotton - Blue",
+  "brand": "Theory",
+  "cat": "Shirt",
+  "subs": [
+   "Polo"
+  ],
+  "colors": [
+   "Pink"
+  ],
+  "size": "XXL",
+  "status": "closet",
+  "note": "",
+  "paid": 35.0
+ },
+ {
+  "id": "c075",
+  "name": "Movement Dress Shirt - Rose Bay Gingham",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Dress Shirt",
+   "Performance"
+  ],
+  "colors": [
+   "White",
+   "Blue",
+   "Red"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 71.0
+ },
+ {
+  "id": "c076",
+  "name": "Pure Linen Shirt - Navy",
+  "brand": "Charles Tyrwhitt",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Linen"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 33.0
+ },
+ {
+  "id": "c077",
+  "name": "Midweight Cotton T-Shirt - Navy",
+  "brand": "Banana Republic Factory",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 16.0
+ },
+ {
+  "id": "c078",
+  "name": "Blue Stretch Oxford",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Performance"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": ""
+ },
+ {
+  "id": "c079",
+  "name": "Movement Dress Shirt - Lavender Valley Stripe",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Dress Shirt",
+   "Performance"
+  ],
+  "colors": [
+   "Purple"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 71.0
+ },
+ {
+  "id": "c080",
+  "name": "Cotton Heavyweight Relaxed Fit Jersey Tee - Heather Grey",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 29.9
+ },
+ {
+  "id": "c081",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 4)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c082",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 5)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c083",
+  "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 6)",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 14.0
+ },
+ {
+  "id": "c084",
+  "name": "Classic Heavy Slub Pocket Tee - Forged Iron",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 34.0
+ },
+ {
+  "id": "c085",
+  "name": "Stretch Sweater Fleece Shirt - Charcoal Twill",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Long Sleeve",
+   "Sweater",
+   "Button Down",
+   "Twill"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "0% Cotton. Not ideal. Good introduction to this type of shirt",
+  "paid": 59.99
+ },
+ {
+  "id": "c086",
+  "name": "Classic Stretch Selvage Long Sleeve Shirt - Blue Mini Stripe",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Blue",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "From eBay",
+  "paid": 31.0
+ },
+ {
+  "id": "c087",
+  "name": "Textured Knit Shirt in Oxblood",
+  "brand": "The Normal Brand",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Grey",
+   "White"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "Tried Graphite from Nordstrom. Really comfortable. Really good fit with an undershirt. I'm sure even better without. 100% cotton",
+  "paid": 118.0
+ },
+ {
+  "id": "c088",
+  "name": "Coastline Knit Plaid Button Down Shirt - Bear Mountain Houndstooth",
+  "brand": "Faherty",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "closet",
+  "note": "",
+  "paid": 125.0
+ },
+ {
+  "id": "c089",
+  "name": "Scout Chukka Boot in Mocha Brown Suede",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Chukka Boot"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "11.5",
+  "status": "closet",
+  "note": "",
+  "paid": 160.0
+ },
+ {
+  "id": "c090",
+  "name": "Executive Cap Toe in Black Coffee Leather",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Dress Shoe"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "11.5",
+  "status": "closet",
+  "note": "",
+  "paid": 168.0
+ },
+ {
+  "id": "c091",
+  "name": "Legend Chelsea Boot in Black Matte",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Chelsea Boots"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "11.5 W",
+  "status": "closet",
+  "note": "",
+  "paid": 199.0
+ },
+ {
+  "id": "c092",
+  "name": "Ghost Max 2",
+  "brand": "Brooks",
+  "cat": "Shoes",
+  "subs": [
+   "Sneaker"
+  ],
+  "colors": [
+   "White"
+  ],
+  "size": "12",
+  "status": "closet",
+  "note": "",
+  "paid": 109.95
+ },
+ {
+  "id": "c093",
+  "name": "XC4 Tanner Plain Toe",
+  "brand": "Johnston & Murphy",
+  "cat": "Shoes",
+  "subs": [
+   "Dress Hybrid"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "12",
+  "status": "closet",
+  "note": "",
+  "paid": 189.0
+ },
+ {
+  "id": "c094",
+  "name": "990v6",
+  "brand": "New Balance",
+  "cat": "Shoes",
+  "subs": [
+   "Sneaker"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "11.5 W",
+  "status": "closet",
+  "note": "",
+  "paid": 199.0
+ },
+ {
+  "id": "c095",
+  "name": "Cadet Lace-Up Boot in Shadow Grey Suede",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [],
+  "colors": [
+   "Grey"
+  ],
+  "size": "12",
+  "status": "closet",
+  "note": "",
+  "paid": 199.0
+ },
+ {
+  "id": "c096",
+  "name": "Flowknit Performance Shorts - Black",
+  "brand": "Quince",
+  "cat": "Shorts",
+  "subs": [
+   "Workout",
+   "Performance"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "L",
+  "status": "closet",
+  "note": "",
+  "paid": 34.9
+ },
+ {
+  "id": "c097",
+  "name": "7\" Linen-Blend Short - Grey Texture",
+  "brand": "Banana Republic Factory",
+  "cat": "Shorts",
+  "subs": [
+   "Linen"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 32.0
+ },
+ {
+  "id": "c098",
+  "name": "7\" Tech Oxford Short - Sky Blue",
+  "brand": "J.Crew",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 29.0
+ },
+ {
+  "id": "c099",
+  "name": "All Day Short 1.0 (7\") - Charcoal",
+  "brand": "Faherty",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "35\"",
+  "status": "closet",
+  "note": "",
+  "paid": 55.0
+ },
+ {
+  "id": "c100",
+  "name": "Flowknit Performance Shorts - Heather Green",
+  "brand": "Quince",
+  "cat": "Shorts",
+  "subs": [
+   "Workout",
+   "Performance"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "L",
+  "status": "closet",
+  "note": "",
+  "paid": 29.0
+ },
+ {
+  "id": "c101",
+  "name": "7\" Tech Short - Navy",
+  "brand": "J.Crew",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 29.0
+ },
+ {
+  "id": "c102",
+  "name": "All Day Short (7\")",
+  "brand": "Faherty",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 39.0
+ },
+ {
+  "id": "c103",
+  "name": "All Day Short 1.0 (7\") - Green",
+  "brand": "Faherty",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "35\"",
+  "status": "closet",
+  "note": "",
+  "paid": 55.0
+ },
+ {
+  "id": "c104",
+  "name": "Flowknit Performance Shorts - Heather Navy",
+  "brand": "Quince",
+  "cat": "Shorts",
+  "subs": [
+   "Workout",
+   "Performance"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "L",
+  "status": "closet",
+  "note": "",
+  "paid": 29.0
+ },
+ {
+  "id": "c105",
+  "name": "7\" Tech Short - Faded Black",
+  "brand": "J.Crew",
+  "cat": "Shorts",
+  "subs": [
+   "Tech"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 29.0
+ },
+ {
+  "id": "c106",
+  "name": "ProTech Golf Short (7\") - Wavecrest",
+  "brand": "Quince",
+  "cat": "Shorts",
+  "subs": [
+   "Performance"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 40.0
+ },
+ {
+  "id": "c107",
+  "name": "7\" Linen Short - Navy White",
+  "brand": "J.Crew",
+  "cat": "Shorts",
+  "subs": [
+   "Linen"
+  ],
+  "colors": [
+   "Navy",
+   "White"
+  ],
+  "size": "36\"",
+  "status": "closet",
+  "note": "",
+  "paid": 25.0
+ },
+ {
+  "id": "c108",
+  "name": "Everyday Cotton Solid Ankle Socks",
+  "brand": "Quince",
+  "cat": "Socks",
+  "subs": [],
+  "colors": [
+   "Grey"
+  ],
+  "size": "L",
+  "status": "closet",
+  "note": "",
+  "paid": 18.0
+ },
+ {
+  "id": "c109",
+  "name": "Everyday Cotton Targeted Stretch Crew Socks - Black",
+  "brand": "Quince",
+  "cat": "Socks",
+  "subs": [],
+  "colors": [
+   "Black"
+  ],
+  "size": "L",
+  "status": "closet",
+  "note": "",
+  "paid": 29.99
+ },
+ {
+  "id": "p001",
+  "name": "Lightweight Easy Trousers - Tobacco",
+  "brand": "Spier & Mackay",
+  "cat": "",
+  "subs": [],
+  "colors": [],
+  "size": "",
+  "status": "passed",
+  "note": ""
+ },
+ {
+  "id": "p002",
+  "name": "Chalet Lounge Pant",
+  "brand": "",
+  "cat": "",
+  "subs": [],
+  "colors": [],
+  "size": "",
+  "status": "passed",
+  "note": ""
+ },
+ {
+  "id": "p003",
+  "name": "Weatherproof Fleece-Lined Jacket - Faded Cargo Green",
+  "brand": "Quince",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 90.0
+ },
+ {
+  "id": "p004",
+  "name": "Weatherproof Fleece-Lined Jacket - Carbon Grey",
+  "brand": "Quince",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 95.0
+ },
+ {
+  "id": "p005",
+  "name": "French Terry 5-Pocket Pants - Deep Navy",
+  "brand": "Quince",
+  "cat": "Pants",
+  "subs": [
+   "Traveler"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "36\"",
+  "status": "passed",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "p006",
+  "name": "Saturday Slim Straight Twill Chino",
+  "brand": "Marine Layer",
+  "cat": "Pants",
+  "subs": [
+   "Chinos",
+   "Joggers"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "36x30",
+  "status": "passed",
+  "note": "Didn't love how it felt around crotch",
+  "paid": 128.0
+ },
+ {
+  "id": "p007",
+  "name": "XC4 Performance Shirt - White/Navy Gingham",
+  "brand": "Johnston & Murphy",
+  "cat": "Shirt",
+  "subs": [
+   "Performance",
+   "Button Down"
+  ],
+  "colors": [
+   "White",
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Same price if not more than Faherty Movement and didn't like feel as much",
+  "paid": 80.0
+ },
+ {
+  "id": "p008",
+  "name": "Everyday Oxford Shirt - Blue Classic Stripe",
+  "brand": "Bonobos",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Oxford"
+  ],
+  "colors": [
+   "White",
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Not good quality for price. Felt cheap, H&M quality",
+  "paid": 62.7
+ },
+ {
+  "id": "p009",
+  "name": "Corbet Ribbed Hoodie",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Sweatshirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Hood was too pointy",
+  "paid": 85.0
+ },
+ {
+  "id": "p010",
+  "name": "The Jack - Indigo Stripe",
+  "brand": "Taylor Stitch",
+  "cat": "Shirt",
+  "subs": [
+   "Oxford",
+   "Button Down"
+  ],
+  "colors": [
+   "White",
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Too thin. Too small",
+  "paid": 105.0
+ },
+ {
+  "id": "p011",
+  "name": "Everyday Shirt - Navy Neps Texture",
+  "brand": "Bonobos",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Stretch"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Not good quality for price. Felt cheap, H&M quality",
+  "paid": 62.7
+ },
+ {
+  "id": "p012",
+  "name": "Everyday Shirt - Navy Plum Gingham",
+  "brand": "Bonobos",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Stretch"
+  ],
+  "colors": [
+   "Purple",
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Not good quality for price. Felt cheap, H&M quality",
+  "paid": 62.7
+ },
+ {
+  "id": "p013",
+  "name": "Premium Heavyweight 2.0 Tee",
+  "brand": "Abercrombie & Fitch",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Good weight. Collar was too tight and it was borderline uncomfortable. Solid shirt for the price besides that",
+  "paid": 22.0
+ },
+ {
+  "id": "p014",
+  "name": "The Jack - Fatigued Olive Waffle",
+  "brand": "Taylor Stitch",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Waffle"
+  ],
+  "colors": [
+   "Green"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Loved the look, feel and color. XL was too small. XXL was too big. Bummer.",
+  "paid": 95.0
+ },
+ {
+  "id": "p015",
+  "name": "Mongolian Cashmere Fisherman Pullover Hoodie in Black",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Sweatshirt"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Too fancy for a hoodie, would rather get a Q zip or sweater. Returning",
+  "paid": 129.9
+ },
+ {
+  "id": "p016",
+  "name": "Organic Cotton Cashmere Waffle Hoodie in Charcoal",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Sweatshirt"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "p017",
+  "name": "Organic Cotton Stretch Textured Twill Shirt - Charcoal",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Twill"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 39.99
+ },
+ {
+  "id": "p018",
+  "name": "Pacifica Stretch Twill Shirt - Deep Navy",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Twill"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Did not like material",
+  "paid": 82.0
+ },
+ {
+  "id": "p019",
+  "name": "California Oxford Shirt - Vintage Indigo",
+  "brand": "Marine Layer",
+  "cat": "Shirt",
+  "subs": [
+   "Oxford",
+   "Button Down"
+  ],
+  "colors": [
+   "Blue"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Purchased and returned. Good shirt, just didn't need it right now",
+  "paid": 95.0
+ },
+ {
+  "id": "p020",
+  "name": "Surplus Heavy T-Shirt - Espresso",
+  "brand": "Flint and Tinder",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 58.0
+ },
+ {
+  "id": "p021",
+  "name": "State of Mind Shirt - Slim - Smokey Olive Plaid",
+  "brand": "Rhone",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "White",
+   "Green"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Feels like wearing a plastic rubber",
+  "paid": 118.0
+ },
+ {
+  "id": "p022",
+  "name": "Textured Knit Shirt in Java",
+  "brand": "The Normal Brand",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "Tried Graphite from Nordstrom. Really comfortable. Really good fit with an undershirt. I'm sure even better without. 100% cotton",
+  "paid": 118.0
+ },
+ {
+  "id": "p023",
+  "name": "Tomlin Cotton Dobby Button-Up Shirt",
+  "brand": "rag & bone",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XXL",
+  "status": "passed",
+  "note": "XXL too big. Didn't like white stripe on collar when unbuttoned",
+  "paid": 98.0
+ },
+ {
+  "id": "p024",
+  "name": "PatinaTech T-Shirt - Grey",
+  "brand": "Proof",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt",
+   "Tech"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "passed",
+  "note": "",
+  "paid": 68.0
+ },
+ {
+  "id": "p025",
+  "name": "Court Low Top Sneaker in Grey 'Smoke' Suede",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Sneaker"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "",
+  "status": "passed",
+  "note": "",
+  "paid": 140.0
+ },
+ {
+  "id": "p026",
+  "name": "XC+ Durham Chelsea Boot",
+  "brand": "Johnston & Murphy",
+  "cat": "Shoes",
+  "subs": [
+   "Chelsea Boots"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "11.5",
+  "status": "passed",
+  "note": "",
+  "paid": 199.0
+ },
+ {
+  "id": "p027",
+  "name": "Chariot Shoe",
+  "brand": "Brooks",
+  "cat": "Shoes",
+  "subs": [
+   "Sneaker"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "12",
+  "status": "passed",
+  "note": "Too thin. Didn't like look",
+  "paid": 120.0
+ },
+ {
+  "id": "r001",
+  "name": "Regular Oxford Shirt - Light Blue Striped",
+  "brand": "H&M",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Oxford"
+  ],
+  "colors": [
+   "Blue",
+   "White"
+  ],
+  "size": "XL",
+  "status": "retired",
+  "note": "100% Cotton",
+  "paid": 30.0
+ },
+ {
+  "id": "r002",
+  "name": "Upton Chukka",
+  "brand": "Johnston & Murphy",
+  "cat": "Shoes",
+  "subs": [
+   "Chukka Boot"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "12",
+  "status": "retired",
+  "note": "",
+  "paid": 130.0
+ },
+ {
+  "id": "t001",
+  "name": "The Democratic Jean in Japanese Washed Indigo Sashiko",
+  "brand": "Taylor Stitch",
+  "cat": "",
+  "subs": [],
+  "colors": [],
+  "size": "",
+  "status": "try",
+  "note": ""
+ },
+ {
+  "id": "t002",
+  "name": "Saturday Stretch Beach Pants",
+  "brand": "Marine Layer",
+  "cat": "",
+  "subs": [],
+  "colors": [],
+  "size": "",
+  "status": "try",
+  "note": ""
+ },
+ {
+  "id": "t003",
+  "name": "1986 Barn Jacket",
+  "brand": "J.Crew",
+  "cat": "Outerwear",
+  "subs": [
+   "Jacket"
+  ],
+  "colors": [],
+  "size": "",
+  "status": "try",
+  "note": ""
+ },
+ {
+  "id": "t004",
+  "name": "6\" Lined Sport & Swim Short",
+  "brand": "Marine Layer",
+  "cat": "Bathing Suit",
+  "subs": [
+   "Shorts"
+  ],
+  "colors": [
+   "Navy"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 98.0
+ },
+ {
+  "id": "t005",
+  "name": "Bamboo Jersey Lounge Short in True Black",
+  "brand": "Quince",
+  "cat": "Pants",
+  "subs": [
+   "Shorts"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "L",
+  "status": "try",
+  "note": "",
+  "paid": 29.9
+ },
+ {
+  "id": "t006",
+  "name": "Cotton Linen Drawstring Pant - Dark Slate",
+  "brand": "Wills",
+  "cat": "Pants",
+  "subs": [
+   "Linen",
+   "Joggers"
+  ],
+  "colors": [
+   "Blue",
+   "Green"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 108.0
+ },
+ {
+  "id": "t007",
+  "name": "The Jack - Coal Waffle",
+  "brand": "Taylor Stitch",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Waffle"
+  ],
+  "colors": [
+   "Charcoal"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "Loved feel, look, color. XL too small. XXL too big. Hope to try again.",
+  "paid": 125.0
+ },
+ {
+  "id": "t008",
+  "name": "California Oxford Button Down - Mini Gingham",
+  "brand": "Buck Mason",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Oxford"
+  ],
+  "colors": [
+   "Brown",
+   "White"
+  ],
+  "size": "",
+  "status": "try",
+  "note": "100% Oxford",
+  "paid": 148.0
+ },
+ {
+  "id": "t009",
+  "name": "Cotton Ribbed Crewneck Sweater in Heather Brown",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Sweater"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 60.0
+ },
+ {
+  "id": "t010",
+  "name": "Australian Merino Wool Half Zip Sweater in Coffee Bean Brown",
+  "brand": "Quince",
+  "cat": "Shirt",
+  "subs": [
+   "Quarter Zip",
+   "Sweater"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 89.9
+ },
+ {
+  "id": "t011",
+  "name": "Vance Shirt - Navy Ivory Check",
+  "brand": "Rails",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down",
+   "Twill"
+  ],
+  "colors": [
+   "Navy",
+   "White"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "40% Rayon",
+  "paid": 168.0
+ },
+ {
+  "id": "t012",
+  "name": "Isles Linen Shirt - Ghost Grey Houndstooth",
+  "brand": "Wills",
+  "cat": "Shirt",
+  "subs": [
+   "Button Down"
+  ],
+  "colors": [
+   "Grey"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 118.0
+ },
+ {
+  "id": "t013",
+  "name": "American Heavyweight Pocket T-Shirt - Delicioso",
+  "brand": "Flint and Tinder",
+  "cat": "Shirt",
+  "subs": [
+   "T-Shirt"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 68.0
+ },
+ {
+  "id": "t014",
+  "name": "Puremeso Essential Hoodie in Taupe",
+  "brand": "The Normal Brand",
+  "cat": "Shirt",
+  "subs": [
+   "Sweatshirt"
+  ],
+  "colors": [
+   "Beige"
+  ],
+  "size": "XL",
+  "status": "try",
+  "note": "",
+  "paid": 88.0
+ },
+ {
+  "id": "t015",
+  "name": "Handsewn Loafer in Brown 'Black Matte' Leather",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Loafer"
+  ],
+  "colors": [
+   "Black"
+  ],
+  "size": "",
+  "status": "try",
+  "note": "",
+  "paid": 145.0
+ },
+ {
+  "id": "t016",
+  "name": "Premier Low Top Sneaker in Brown 'Tobacco' Leather",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Sneaker"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "",
+  "status": "try",
+  "note": "",
+  "paid": 135.0
+ },
+ {
+  "id": "t017",
+  "name": "Captain Lace-Up Boot in Rich Brown 'Jasper' Leather",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Boots"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "11.5",
+  "status": "try",
+  "note": "",
+  "paid": 199.0
+ },
+ {
+  "id": "t018",
+  "name": "Statesman Dress Shoe in Brown 'Tobacco' Leather",
+  "brand": "Thursday Boots",
+  "cat": "Shoes",
+  "subs": [
+   "Dress Hybrid"
+  ],
+  "colors": [
+   "Brown"
+  ],
+  "size": "12",
+  "status": "try",
+  "note": "",
+  "paid": 180.0
+ }
+]

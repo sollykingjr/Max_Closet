@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Max's Closet">
+<meta name="theme-color" content="#1D4F5E">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Max's Closet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: phone-first ledger. Sticky header with counts, content list in the middle, fixed bottom tab bar. Rows are dense and scannable; brand headings carry the sizes that fit. */
+:root{
+  --bg:#EEF1F3; --surface:#FFFFFF; --ink:#13202A; --muted:#5A6873; --line:#D5DCE1;
+  --accent:#1D4F5E; --accent-ink:#FFFFFF; --wash:#E3EAEE;
+  --ok:#1F6B45; --ok-bg:#DCEFE4; --warn:#7A5200; --warn-bg:#F8E8BE; --bad:#9C2F2A; --bad-bg:#F5DAD7; --info:#27567F; --info-bg:#DBE7F2;
+  --font-display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --font-body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --font-data:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161B; --surface:#18222A; --ink:#E8EEF2; --muted:#93A3AF; --line:#2A3842;
+  --accent:#6FB7C8; --accent-ink:#0B1A20; --wash:#1F2C35;
+  --ok:#6FD0A0; --ok-bg:#17372A; --warn:#E8C46A; --warn-bg:#3A2F12; --bad:#F0968F; --bad-bg:#3E1E1C; --info:#8DB8E0; --info-bg:#1B2D3E;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F161B; --surface:#18222A; --ink:#E8EEF2; --muted:#93A3AF; --line:#2A3842;
+  --accent:#6FB7C8; --accent-ink:#0B1A20; --wash:#1F2C35;
+  --ok:#6FD0A0; --ok-bg:#17372A; --warn:#E8C46A; --warn-bg:#3A2F12; --bad:#F0968F; --bad-bg:#3E1E1C; --info:#8DB8E0; --info-bg:#1B2D3E;
+  color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:0 96px}
+.wrap{max-width:720px;margin-inline:auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;border-bottom:1px solid var(--line)}
+h1{font-family:var(--font-display);font-weight:700;font-size:26px;line-height:1.05;margin:0;letter-spacing:-.01em}
+.counts{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-family:var(--font-data);font-size:12px;color:var(--muted)}
+.counts b{color:var(--ink);font-weight:500}
+main{padding-top:14px;display:flex;flex-direction:column;gap:14px}
+[data-view]{display:flex;flex-direction:column;gap:14px;min-width:0}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:500 13px var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+input,select,textarea{font:400 15px var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:84px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+label input,label select,label textarea{text-transform:none;letter-spacing:0;color:var(--ink);font-weight:400}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit}
+.btn{font:600 14px var(--font-body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.note{font-size:13px;color:var(--muted)}
+.group{display:flex;flex-direction:column}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 2px 6px;border-bottom:1px solid var(--line)}
+.ghead h2{margin:0;font-family:var(--font-display);font-size:17px;font-weight:600}
+.ghead span{font-family:var(--font-data);font-size:12px;color:var(--muted);text-align:right}
+.row{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;width:100%;text-align:left;background:var(--surface);border:0;border-bottom:1px solid var(--line);padding:11px 12px;color:var(--ink);cursor:pointer}
+.row:first-of-type{border-top:0}
+.row .main{min-width:0;display:flex;flex-direction:column;gap:2px}
+.row .name{font-weight:500;overflow-wrap:anywhere}
+.row .meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.row .comment{font-size:13px;color:var(--muted);font-style:italic;overflow-wrap:anywhere}
+.row .side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.pill{font:500 11px var(--font-data);letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:3px 6px;white-space:nowrap}
+.pill.closet{background:var(--info-bg);color:var(--info)}
+.pill.approved{background:var(--ok-bg);color:var(--ok)}
+.pill.try{background:var(--warn-bg);color:var(--warn)}
+.pill.passed{background:var(--bad-bg);color:var(--bad)}
+.pill.retired{background:var(--wash);color:var(--muted)}
+.mono{font-family:var(--font-data);font-size:12px}
+.maxp{font-family:var(--font-data);font-size:12px;color:var(--ink)}
+.maxp.unset{color:var(--muted)}
+.list{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.panel h2{margin:0;font-family:var(--font-display);font-size:18px}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px}
+.empty b{display:block;color:var(--ink);font-family:var(--font-display);font-size:17px;margin-bottom:4px}
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-family:var(--font-display);font-size:16px}
+.card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px}
+.verdict{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.verdict .big{font-family:var(--font-display);font-weight:700;font-size:22px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{background:none;border:0;color:var(--muted);padding:12px 4px 10px;font:600 12px var(--font-body);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-top:3px solid transparent}
+.tab[aria-selected="true"]{color:var(--accent);border-top-color:var(--accent)}
+.sheet-back{position:fixed;inset:0;z-index:20;background:rgba(10,18,24,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:720px;max-height:92%;overflow:auto;background:var(--bg);border-radius:14px 14px 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.sheet h2{margin:0;font-family:var(--font-display);font-size:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.grid2{grid-template-columns:1fr}}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.spacer{flex:1}
+.thinking{color:var(--muted);font-style:italic}
+.err{color:var(--bad);font-size:13px}
+.fab{align-self:flex-start}
+.banner{margin:0;padding:9px 12px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head><body>
+
+<div class="wrap">
+<header class="top">
+  <h1>Max's Closet</h1>
+  <div class="counts" id="counts"></div>
+</header>
+<main>
+<p class="banner" id="banner" role="status" hidden></p>
+
+<section data-view="log" id="v-log">
+  <div class="bar">
+    <input id="q-log" type="search" placeholder="Search styles, brands, notes" aria-label="Search styles">
+  </div>
+  <div class="chips" id="chips-log" role="group" aria-label="Filter by status"></div>
+  <p class="note" id="log-help"></p>
+  <div id="list-log"></div>
+  <button class="btn ghost fab" id="add-style" type="button">+ Add a style</button>
+</section>
+
+<section data-view="closet" id="v-closet" hidden>
+  <div class="bar">
+    <input id="q-closet" type="search" placeholder="Search your closet" aria-label="Search closet">
+  </div>
+  <div class="chips" id="chips-closet" role="group" aria-label="Filter by category"></div>
+  <div id="list-closet"></div>
+  <button class="btn ghost fab" id="add-piece" type="button">+ Add a piece</button>
+</section>
+
+<section data-view="outfits" id="v-outfits" hidden>
+  <div class="panel">
+    <h2>Outfits from what you own</h2>
+    <div class="chips" id="chips-occasion" role="group" aria-label="Occasion"></div>
+    <label>Or describe it<input id="occasion" type="text" placeholder="Dinner Saturday, mid-60s, a little dressy"></label>
+    <label>Build around<select id="anchor"></select></label>
+    <div class="actions"><button class="btn" id="go-outfits" type="button">Suggest outfits</button><button class="btn ghost" id="stop-outfits" type="button" hidden>Stop</button></div>
+    <div id="out-outfits" aria-live="polite"></div>
+  </div>
+</section>
+
+<section data-view="check" id="v-check" hidden>
+  <div class="panel">
+    <h2>Deal check</h2>
+    <p class="note" style="margin:0">Paste an eBay or Poshmark listing (title, price, size, condition) or add a screenshot. It checks the style against what you have tried on, your size, your max price and your closet.</p>
+    <label>Listing<textarea id="listing" placeholder="Faherty Movement Shirt, Atlantic Sky, size XL, $34 + $7 shipping, excellent condition"></textarea></label>
+    <div class="grid2">
+      <label id="shot-wrap">Screenshot<input id="shot" type="file" accept="image/*"></label>
+      <label>My rules<textarea id="rules" aria-describedby="rules-note" style="min-height:110px"></textarea></label>
+    </div>
+    <p class="note" id="rules-note" style="margin:0">Rules save on their own and guide every check and outfit.</p>
+    <div class="actions"><button class="btn" id="go-check" type="button">Check this deal</button><button class="btn ghost" id="stop-check" type="button" hidden>Stop</button></div>
+    <div id="out-check" aria-live="polite"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button class="tab" role="tab" data-tab="log" aria-selected="true">Fit log</button>
+  <button class="tab" role="tab" data-tab="closet" aria-selected="false">Closet</button>
+  <button class="tab" role="tab" data-tab="outfits" aria-selected="false">Outfits</button>
+  <button class="tab" role="tab" data-tab="check" aria-selected="false">Deal check</button>
+</nav>
+
+<div class="sheet-back" id="sheet-back" hidden>
+  <form class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <h2 id="sheet-title">Edit style</h2>
+    <div id="fill-box" hidden>
+      <label>Fill from a listing<textarea id="fill-text" placeholder="Paste a product page or listing text"></textarea></label>
+      <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="fill-go">Fill the fields</button><span class="note" id="fill-msg"></span></div>
+    </div>
+    <label>Name<input id="f-name" required></label>
+    <div class="grid2">
+      <label>Brand<input id="f-brand" list="brand-list"></label>
+      <label>Category<select id="f-cat"></select></label>
+    </div>
+    <div class="grid2">
+      <label>Status<select id="f-status"></select></label>
+      <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
+    </div>
+    <div class="grid2">
+      <label>Max price (secondhand)<input id="f-max" inputmode="decimal" placeholder="$"></label>
+      <label>Paid<input id="f-paid" inputmode="decimal" placeholder="$"></label>
+    </div>
+    <div class="grid2">
+      <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
+      <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
+    </div>
+    <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
+    <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
+    <datalist id="brand-list"></datalist>
+    <p class="err" id="sheet-err" role="alert"></p>
+    <div class="actions">
+      <button class="btn" type="submit" id="f-save">Save</button>
+      <button class="btn ghost" type="button" id="f-cancel">Cancel</button>
+      <span class="spacer"></span>
+      <button class="btn danger" type="button" id="f-del" hidden>Delete</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+"use strict";
+var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
+var CATS=["Shirt","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
+var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
+var state={items:[],view:"log",logFilter:"known",closetCat:"All",loaded:false,db:null,sample:null,rules:"",editing:null,occ:""};
+var $=function(id){return document.getElementById(id)};
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function money(n){return (n==null||n==="")?"":"$"+(Math.round(n*100)/100).toString()}
+function num(v){var n=parseFloat(String(v).replace(/[^0-9.]/g,""));return isFinite(n)?n:null}
+function listOf(s){return String(s||"").split(",").map(function(x){return x.trim()}).filter(Boolean)}
+function byBrandName(a,b){return (a.brand||"~").localeCompare(b.brand||"~")||a.name.localeCompare(b.name)}
+function known(it){return it.status==="closet"||it.status==="approved"}
+function matches(it,q){if(!q)return true;q=q.toLowerCase();return [it.name,it.brand,it.note,it.fabric,it.cat,(it.subs||[]).join(" "),(it.colors||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>-1}
+
+/* ---------- storage (Cloudflare D1 through /api) ---------- */
+function setBanner(msg){var b=$("banner");b.hidden=!msg;b.textContent=msg||""}
+function api(path,opts){
+  opts=opts||{};
+  var init={method:opts.method||"GET",headers:{}};
+  if(opts.body!==undefined){init.headers["content-type"]="application/json";init.body=JSON.stringify(opts.body)}
+  if(opts.signal)init.signal=opts.signal;
+  return fetch(path,init).then(function(r){
+    return r.text().then(function(t){
+      var j=null;try{j=t?JSON.parse(t):null}catch(e){}
+      if(!r.ok){var err=new Error((j&&j.error)||("HTTP "+r.status));err.status=r.status;throw err}
+      return j;
+    });
+  });
+}
+function start(){
+  render();
+  api("/api/state").then(function(s){
+    state.items=s.items||[];state.rules=s.rules||"";$("rules").value=state.rules;
+    state.loaded=true;setBanner("");render();
+  }).catch(function(e){
+    state.loaded=true;state.dbMsg=(e&&e.message)||"Could not reach the server.";
+    setBanner("Could not load your closet: "+state.dbMsg);render();
+  });
+}
+var rulesTimer=null;
+function saveRules(){
+  state.rules=$("rules").value;
+  clearTimeout(rulesTimer);
+  rulesTimer=setTimeout(function(){api("/api/rules",{method:"PUT",body:{rules:state.rules}}).catch(function(){setBanner("Could not save your rules. Check your connection.")})},900);
+}
+
+/* ---------- rendering ---------- */
+function render(){renderCounts();renderLog();renderCloset();renderAnchor();}
+function renderCounts(){
+  var c={closet:0,approved:0,try:0,passed:0};
+  state.items.forEach(function(i){if(c[i.status]!=null)c[i.status]++});
+  $("counts").innerHTML=state.loaded&&state.items.length?
+    "<span><b>"+c.closet+"</b> owned</span><span><b>"+c.approved+"</b> approved</span><span><b>"+c.try+"</b> to try</span><span><b>"+c.passed+"</b> passed</span>":"";
+}
+function chips(el,opts,cur,fn){
+  el.innerHTML=opts.map(function(o){return '<button type="button" class="chip" data-v="'+esc(o[0])+'" aria-pressed="'+(o[0]===cur)+'">'+esc(o[1])+'</button>'}).join("");
+  Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){fn(b.dataset.v)}});
+}
+function rowHtml(it,showCat){
+  var meta=[];if(it.brand)meta.push(esc(it.brand));if(showCat&&it.cat)meta.push(esc(it.cat));
+  if((it.colors||[]).length)meta.push(esc(it.colors.join(", ")));
+  var maxTxt=it.maxPrice!=null?'<span class="maxp">max '+esc(money(it.maxPrice))+'</span>':(known(it)?'<span class="maxp unset">set max</span>':'');
+  var side='<span class="side"><span class="pill '+esc(it.status)+'">'+esc(STATUS[it.status]||it.status)+'</span>'+(it.size?'<span class="mono">'+esc(it.size)+'</span>':'')+maxTxt+'</span>';
+  return '<button type="button" class="row" data-id="'+esc(it.id)+'"><span class="main"><span class="name">'+esc(it.name)+'</span>'+(meta.length?'<span class="meta">'+meta.join(" · ")+'</span>':'')+(it.note?'<span class="comment">'+esc(it.note)+'</span>':'')+'</span>'+side+'</button>';
+}
+function bindRows(el){Array.prototype.forEach.call(el.querySelectorAll(".row"),function(b){b.onclick=function(){openSheet(b.dataset.id)}})}
+function emptyBox(title,text){return '<div class="empty"><b>'+esc(title)+'</b>'+esc(text)+'</div>'}
+
+function renderLog(){
+  chips($("chips-log"),[["known","Known fit"],["try","To try"],["passed","Passed"],["retired","Retired"],["all","All"]],state.logFilter,function(v){state.logFilter=v;renderLog()});
+  var help={known:"Everything you own plus styles you approved. These are safe to buy secondhand in the sizes shown.",try:"Styles to try on in person before buying secondhand.",passed:"Styles that did not work. Check these notes before a listing tempts you.",retired:"Pieces you no longer wear.",all:""};
+  $("log-help").textContent=help[state.logFilter]||"";
+  var q=$("q-log").value.trim();
+  var items=state.items.filter(function(i){
+    var f=state.logFilter;
+    var ok=f==="all"||(f==="known"?known(i):i.status===f);
+    return ok&&matches(i,q);
+  }).sort(byBrandName);
+  var el=$("list-log");
+  if(!state.loaded){el.innerHTML=emptyBox("Connecting to your saved data","One moment.");return}
+  if(!state.items.length){el.innerHTML=state.dbMsg?emptyBox("No data to show",state.dbMsg):emptyBox("No styles yet","Add one with the button below, or paste a listing in Deal check.");return}
+  if(!items.length){el.innerHTML=emptyBox("Nothing here","No styles match this filter.");return}
+  var groups={},order=[];
+  items.forEach(function(i){var b=i.brand||"Other";if(!groups[b]){groups[b]=[];order.push(b)}groups[b].push(i)});
+  el.innerHTML=order.map(function(b){
+    var sizes={};groups[b].forEach(function(i){if(i.size&&(known(i)))sizes[i.size]=(sizes[i.size]||0)+1});
+    var sz=Object.keys(sizes).sort(function(a,c){return sizes[c]-sizes[a]}).slice(0,4).join(" · ");
+    return '<div class="group"><div class="ghead"><h2>'+esc(b)+'</h2><span>'+groups[b].length+(sz?' · fits '+esc(sz):'')+'</span></div><div class="list">'+groups[b].map(function(i){return rowHtml(i,true)}).join("")+'</div></div>';
+  }).join("");
+  bindRows(el);
+}
+
+function renderCloset(){
+  var closet=state.items.filter(function(i){return i.status==="closet"});
+  var cats=["All"].concat(CATS.filter(function(c){return closet.some(function(i){return i.cat===c})}));
+  if(closet.some(function(i){return !i.cat}))cats.push("Other");
+  chips($("chips-closet"),cats.map(function(c){return [c,c==="All"?"All "+closet.length:c+" "+closet.filter(function(i){return c==="Other"?!i.cat:i.cat===c}).length]}),state.closetCat,function(v){state.closetCat=v;renderCloset()});
+  var q=$("q-closet").value.trim();
+  var items=closet.filter(function(i){
+    var c=state.closetCat;
+    return (c==="All"||(c==="Other"?!i.cat:i.cat===c))&&matches(i,q);
+  });
+  var el=$("list-closet");
+  if(!state.loaded){el.innerHTML=emptyBox("Connecting to your saved data","One moment.");return}
+  if(!closet.length){el.innerHTML=state.dbMsg?emptyBox("No data to show",state.dbMsg):emptyBox("Your closet is empty","Add a piece to start building outfits.");return}
+  if(!items.length){el.innerHTML=emptyBox("Nothing here","No pieces match.");return}
+  var groups={},order=[];
+  items.sort(function(a,b){return (a.cat||"~").localeCompare(b.cat||"~")||(a.subs&&a.subs[0]||"").localeCompare(b.subs&&b.subs[0]||"")||a.name.localeCompare(b.name)});
+  items.forEach(function(i){var k=i.cat||"Other";if(!groups[k]){groups[k]=[];order.push(k)}groups[k].push(i)});
+  el.innerHTML=order.map(function(k){
+    return '<div class="group"><div class="ghead"><h2>'+esc(k)+'</h2><span>'+groups[k].length+'</span></div><div class="list">'+groups[k].map(function(i){return rowHtml(i,false)}).join("")+'</div></div>';
+  }).join("");
+  bindRows(el);
+}
+
+function renderAnchor(){
+  var sel=$("anchor"),cur=sel.value;
+  var closet=state.items.filter(function(i){return i.status==="closet"}).sort(byBrandName);
+  sel.innerHTML='<option value="">Nothing in particular</option>'+closet.map(function(i){return '<option value="'+esc(i.id)+'">'+esc((i.brand?i.brand+" ":"")+i.name)+'</option>'}).join("");
+  sel.value=cur;
+  chips($("chips-occasion"),OCC.map(function(o){return [o,o]}),state.occ,function(v){state.occ=(state.occ===v?"":v);$("occasion").value=state.occ;renderAnchor()});
+}
+
+/* ---------- sheet (add / edit) ---------- */
+function fillSelect(sel,opts){sel.innerHTML=opts.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'}).join("")}
+function openSheet(id,preset){
+  var it=id?state.items.filter(function(i){return i.id===id})[0]:null;
+  if(id&&!it)return;
+  state.editing=it?it.id:null;
+  var d=it||preset||{status:"try"};
+  $("sheet-title").textContent=it?"Edit style":"Add a style";
+  fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
+  fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
+  var brands={};state.items.forEach(function(i){if(i.brand)brands[i.brand]=1});
+  $("brand-list").innerHTML=Object.keys(brands).sort().map(function(b){return '<option value="'+esc(b)+'">'}).join("");
+  $("f-name").value=d.name||"";$("f-brand").value=d.brand||"";$("f-cat").value=d.cat||"";$("f-status").value=d.status||"try";
+  $("f-size").value=d.size||"";$("f-max").value=d.maxPrice!=null?d.maxPrice:"";$("f-paid").value=d.paid!=null?d.paid:"";
+  $("f-colors").value=(d.colors||[]).join(", ");$("f-subs").value=(d.subs||[]).join(", ");$("f-fabric").value=d.fabric||"";$("f-note").value=d.note||"";
+  $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
+  $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";
+  $("fill-box").hidden=!!it;
+  $("sheet-back").hidden=false;
+  setTimeout(function(){$("f-name").focus()},30);
+}
+function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
+function readSheet(){
+  var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
+    size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),note:$("f-note").value.trim()};
+  var mx=num($("f-max").value),pd=num($("f-paid").value);
+  if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
+  return d;
+}
+function newId(){return "x"+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function saveSheet(ev){
+  ev.preventDefault();
+  var d=readSheet();
+  if(!d.name){$("sheet-err").textContent="Give it a name.";return}
+  var id=state.editing||newId();
+  $("f-save").disabled=true;
+  api("/api/items/"+encodeURIComponent(id),{method:"PUT",body:d}).then(function(saved){
+    var found=false;
+    state.items=state.items.map(function(i){if(i.id===id){found=true;return saved}return i});
+    if(!found)state.items.push(saved);
+    render();closeSheet();
+  }).catch(function(e){$("sheet-err").textContent="Could not save ("+((e&&e.message)||"error")+"). Try again."}).then(function(){$("f-save").disabled=false});
+}
+function deleteSheet(){
+  var b=$("f-del");
+  if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="Tap again to delete";return}
+  if(!state.editing)return;
+  var did=state.editing;
+  api("/api/items/"+encodeURIComponent(did),{method:"DELETE"}).then(function(){
+    state.items=state.items.filter(function(i){return i.id!==did});
+    render();closeSheet();
+  }).catch(function(){$("sheet-err").textContent="Could not delete. Try again."});
+}
+
+/* ---------- AI (runs on the Worker, so the API key never reaches the phone) ---------- */
+function errCopy(e){
+  if(e&&e.name==="AbortError")return "";
+  if(e&&e.message)return e.message;
+  return "Something went wrong. Try again.";
+}
+function itemName(id){var i=state.items.filter(function(x){return x.id===id})[0];return i?((i.brand?i.brand+" ":"")+i.name):null}
+function readImage(file){
+  return new Promise(function(res,rej){
+    var url=URL.createObjectURL(file),img=new Image();
+    img.onload=function(){
+      var s=Math.min(1,1400/Math.max(img.width,img.height)),c=document.createElement("canvas");
+      c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+      res(c.toDataURL("image/jpeg",0.82));
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);rej(new Error("Could not read that image."))};
+    img.src=url;
+  });
+}
+
+var outCtl=null,chkCtl=null;
+function suggestOutfits(){
+  if(!state.items.some(function(i){return i.status==="closet"})){$("out-outfits").innerHTML=emptyBox("Closet is empty","Add pieces first.");return}
+  outCtl=new AbortController();
+  $("go-outfits").disabled=true;$("stop-outfits").hidden=false;
+  $("out-outfits").innerHTML='<p class="thinking">Thinking...</p>';
+  api("/api/ai",{method:"POST",signal:outCtl.signal,body:{task:"outfits",occasion:$("occasion").value.trim(),anchor:$("anchor").value}}).then(function(r){
+    var list=r&&r.outfits;
+    if(!Array.isArray(list)||!list.length)throw new Error("No outfits came back. Try again.");
+    $("out-outfits").innerHTML='<div class="cards">'+list.slice(0,3).map(function(o){
+      var names=(o.pieceIds||[]).map(itemName).filter(Boolean);
+      return '<div class="card"><h3>'+esc(o.title||"Outfit")+'</h3><ul>'+names.map(function(n){return '<li>'+esc(n)+'</li>'}).join("")+'</ul>'+(o.why?'<span class="note">'+esc(o.why)+'</span>':'')+'</div>';
+    }).join("")+'</div>';
+  }).catch(function(e){var m=errCopy(e);$("out-outfits").innerHTML=m?'<p class="err">'+esc(m)+'</p>':""}).then(function(){$("go-outfits").disabled=false;$("stop-outfits").hidden=true});
+}
+
+function checkDeal(){
+  var text=$("listing").value.trim(),file=$("shot").files&&$("shot").files[0];
+  if(!text&&!file){$("out-check").innerHTML='<p class="err">Paste a listing or add a screenshot first.</p>';return}
+  chkCtl=new AbortController();
+  $("go-check").disabled=true;$("stop-check").hidden=false;
+  $("out-check").innerHTML='<p class="thinking">Thinking...</p>';
+  (file?readImage(file):Promise.resolve("")).then(function(image){
+    return api("/api/ai",{method:"POST",signal:chkCtl.signal,body:{task:"deal",listing:text,image:image}});
+  }).then(showVerdict).catch(function(e){var m=errCopy(e);$("out-check").innerHTML=m?'<p class="err">'+esc(m)+'</p>':""}).then(function(){$("go-check").disabled=false;$("stop-check").hidden=true});
+}
+function showVerdict(r){
+  if(!r||typeof r!=="object"){$("out-check").innerHTML='<p class="err">The reply could not be read. Try again.</p>';return}
+  var v=r.verdict==="buy"?["approved","Buy"]:r.verdict==="skip"?["passed","Skip"]:["try","Try first"];
+  var html='<div class="cards"><div class="card"><div class="verdict"><span class="pill '+v[0]+'">'+v[1]+'</span><span class="big">'+esc(r.headline||"")+'</span></div>';
+  if((r.reasons||[]).length)html+='<ul>'+r.reasons.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul>';
+  html+='</div>';
+  if(r.size||r.price)html+='<div class="card"><h3>Size and price</h3>'+(r.size?'<span>'+esc(r.size)+'</span>':'')+(r.price?'<span>'+esc(r.price)+'</span>':'')+'</div>';
+  var outs=(r.outfits||[]).map(function(o){return {title:o.title,names:(o.pieceIds||[]).map(itemName).filter(Boolean)}}).filter(function(o){return o.names.length});
+  var n=Number(r.outfitCount);
+  html+='<div class="card"><h3>'+(isFinite(n)?'Works with '+n+(n===1?' outfit':' outfits')+' you own':'With your closet')+'</h3>'+
+    (outs.length?outs.map(function(o){return '<div><span class="mono">'+esc(o.title||"Outfit")+'</span><ul>'+o.names.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul></div>'}).join(""):'<span class="note">No strong pairings found.</span>')+'</div>';
+  html+='<div class="actions"><button class="btn ghost" id="save-from-check" type="button">Add to my log</button></div></div>';
+  $("out-check").innerHTML=html;
+  $("save-from-check").onclick=function(){
+    var cat=CATS.indexOf(r.category)>-1?r.category:"";
+    openSheet(null,{name:r.suggestName||r.matchedStyle||"",brand:r.brand||"",cat:cat,status:r.verdict==="buy"?"approved":"try",note:""});
+  };
+}
+
+function fillFromListing(){
+  var t=$("fill-text").value.trim();
+  if(!t){$("fill-msg").textContent="Paste some listing text first.";return}
+  $("fill-msg").textContent="Reading...";$("fill-go").disabled=true;
+  api("/api/ai",{method:"POST",body:{task:"fill",text:t}}).then(function(r){
+    if(r.name)$("f-name").value=r.name;if(r.brand)$("f-brand").value=r.brand;
+    if(CATS.indexOf(r.category)>-1)$("f-cat").value=r.category;
+    if((r.colors||[]).length)$("f-colors").value=r.colors.join(", ");if((r.subs||[]).length)$("f-subs").value=r.subs.join(", ");
+    if(r.fabric)$("f-fabric").value=r.fabric;if(r.size)$("f-size").value=r.size;if(r.paid!=null)$("f-paid").value=r.paid;
+    $("fill-msg").textContent="Filled. Check the fields.";
+  }).catch(function(e){$("fill-msg").textContent=errCopy(e)||""}).then(function(){$("fill-go").disabled=false});
+}
+
+/* ---------- wiring ---------- */
+function setView(v){
+  state.view=v;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-view]"),function(s){s.hidden=s.dataset.view!==v});
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.setAttribute("aria-selected",String(t.dataset.tab===v))});
+  window.scrollTo(0,0);
+}
+Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.onclick=function(){setView(t.dataset.tab)}});
+$("q-log").oninput=renderLog;$("q-closet").oninput=renderCloset;
+$("add-style").onclick=function(){openSheet(null,{status:"try"})};
+$("add-piece").onclick=function(){openSheet(null,{status:"closet"})};
+$("f-cancel").onclick=closeSheet;
+$("sheet").onsubmit=saveSheet;$("f-del").onclick=deleteSheet;
+$("sheet-back").addEventListener("click",function(e){if(e.target===$("sheet-back"))closeSheet()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("sheet-back").hidden)closeSheet()});
+$("go-outfits").onclick=suggestOutfits;$("stop-outfits").onclick=function(){if(outCtl)outCtl.abort()};
+$("go-check").onclick=checkDeal;$("stop-check").onclick=function(){if(chkCtl)chkCtl.abort()};
+$("fill-go").onclick=fillFromListing;
+$("rules").addEventListener("input",saveRules);
+$("occasion").addEventListener("input",function(){state.occ="";renderAnchor()});
+
+render();
+start();
+})();
+</script>
+</body></html>
