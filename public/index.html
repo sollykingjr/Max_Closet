@@ -271,6 +271,7 @@ header.top{padding-block:10px 6px}
       <label>Category<select id="f-cat"></select></label>
     </div>
     <label>How many do I own<input id="f-qty" inputmode="numeric" placeholder="1"></label>
+    <div class="field"><span class="flabel">Where I wear it</span><div class="chips" id="f-uses" role="group" aria-label="Where I wear it"></div></div>
     <label>Description (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
     <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
     <div class="grid2">
@@ -320,6 +321,7 @@ header.top{padding-block:10px 6px}
 (function(){
 "use strict";
 var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
+var USES=["Work","Casual","Lounge","Dressy","Workout","Travel","Layer only"];
 var CATS=["T-Shirts","Button Downs","Polos","Long Sleeves","Sweaters","Activewear","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
 function catIdx(c){var i=CATS.indexOf(c);return i<0?99:i}
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
@@ -334,7 +336,7 @@ function num(v){var n=parseFloat(String(v).replace(/[^0-9.]/g,""));return isFini
 function listOf(s){return String(s||"").split(",").map(function(x){return x.trim()}).filter(Boolean)}
 function byBrandName(a,b){return (a.brand||"~").localeCompare(b.brand||"~")||a.name.localeCompare(b.name)}
 function known(it){return it.status==="closet"||it.status==="approved"}
-function matches(it,q){if(!q)return true;q=q.toLowerCase();return [it.name,it.brand,it.note,it.fabric,it.cat,it.look,(it.subs||[]).join(" "),(it.colors||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>-1}
+function matches(it,q){if(!q)return true;q=q.toLowerCase();return [it.name,it.brand,it.note,it.fabric,it.cat,it.look,(it.uses||[]).join(" "),(it.subs||[]).join(" "),(it.colors||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>-1}
 function pad(n){return n<10?"0"+n:""+n}
 function today(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -597,6 +599,13 @@ function savePicker(ev){
 
 /* ---------- item sheet (add / edit / detail) ---------- */
 function fillSelect(sel,opts){sel.innerHTML=opts.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'}).join("")}
+function renderUsesPick(){
+  var el=$("f-uses");
+  el.innerHTML=USES.map(function(u){return '<button type="button" class="chip" data-u="'+esc(u)+'" aria-pressed="'+(state.sheet.uses.indexOf(u)>-1)+'">'+esc(u)+'</button>'}).join("");
+  Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){
+    var i=state.sheet.uses.indexOf(b.dataset.u);if(i>-1)state.sheet.uses.splice(i,1);else state.sheet.uses.push(b.dataset.u);renderUsesPick();
+  }});
+}
 function renderRatingPick(){
   var el=$("f-rating");
   el.innerHTML=[1,2,3,4,5].map(function(n){return '<button type="button" data-n="'+n+'" class="'+(state.sheet.rating>=n?"on":"")+'" aria-label="'+n+' star'+(n>1?"s":"")+'">★</button>'}).join("");
@@ -623,7 +632,7 @@ function openSheet(id,preset){
   if(id&&!it)return;
   state.editing=it?it.id:null;
   var d=it||preset||{status:"try"};
-  state.sheet={id:it?it.id:newId(),rating:d.rating||null,photo:null,removePhoto:false};
+  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),photo:null,removePhoto:false};
   $("sheet-title").textContent=it?(it.status==="closet"?"Edit piece":"Edit style"):(d.status==="closet"?"Add a piece":"Add a style");
   fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
   fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
@@ -637,7 +646,7 @@ function openSheet(id,preset){
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
   state.fillShot="";$("fill-box").hidden=!!it;
   $("wear-box").hidden=!it;
-  renderRatingPick();renderPhotoBox();
+  renderRatingPick();renderUsesPick();renderPhotoBox();
   $("sheet-back").hidden=false;refreshSheetStats();
   if(!it)setTimeout(function(){$("f-name").focus()},30);
 }
@@ -645,7 +654,7 @@ function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
   var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
     size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),note:$("f-note").value.trim(),
-    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1};
+    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1,uses:state.sheet.uses.slice()};
   var mx=num($("f-max").value),pd=num($("f-paid").value);
   if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
   var cur=state.editing&&itemById(state.editing);if(cur&&cur.url)d.url=cur.url;

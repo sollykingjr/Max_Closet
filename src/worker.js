@@ -2,6 +2,7 @@
 // Static UI lives in /public (served by the assets binding). This file handles /api/*.
 import SEED from "./seed.json";
 
+const USES = ["Work", "Casual", "Lounge", "Dressy", "Workout", "Travel", "Layer only"];
 const STATUSES = ["closet", "approved", "try", "passed", "retired"];
 const CATS = ["T-Shirts", "Button Downs", "Polos", "Long Sleeves", "Sweaters", "Activewear", "Pants", "Shorts", "Outerwear", "Blazer", "Shoes", "Accessories", "Bathing Suit", "Socks"];
 
@@ -62,6 +63,7 @@ function toItem(r) {
     rating: r.rating == null ? null : r.rating,
     look: r.look || "",
     qty: r.qty || 1,
+    uses: JSON.parse(r.uses || "[]"),
     photoV: r.photo_v || null,
   };
 }
@@ -90,6 +92,7 @@ function cleanItem(id, b) {
     rating: ratingOrNull(b.rating),
     look: str(b.look, 600),
     qty: Math.min(99, Math.max(1, parseInt(b.qty, 10) || 1)),
+    uses: (Array.isArray(b.uses) ? b.uses : []).filter((x) => USES.includes(x)),
   };
 }
 const ratingOrNull = (v) => {
@@ -97,14 +100,14 @@ const ratingOrNull = (v) => {
   return n >= 1 && n <= 5 ? n : null;
 };
 
-const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","qty","updated_at"];
+const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","qty","uses","updated_at"];
 const UPSERT =
   "INSERT INTO items (" + COLS.join(",") + ") VALUES (" + COLS.map(() => "?").join(",") + ") " +
   "ON CONFLICT(id) DO UPDATE SET " + COLS.slice(1).map((c) => c + "=excluded." + c).join(",");
 
 const itemBinds = (c) => [
   c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
-  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, c.qty, Date.now(),
+  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, c.qty, JSON.stringify(c.uses), Date.now(),
 ];
 const upsertStmt = (env, c) => env.DB.prepare(UPSERT).bind(...itemBinds(c));
 
@@ -133,6 +136,7 @@ async function init(env) {
   const have = new Set(cols.map((c) => c.name));
   if (!have.has("rating")) await env.DB.prepare("ALTER TABLE items ADD COLUMN rating INTEGER").run();
   if (!have.has("qty")) await env.DB.prepare("ALTER TABLE items ADD COLUMN qty INTEGER").run();
+  if (!have.has("uses")) await env.DB.prepare("ALTER TABLE items ADD COLUMN uses TEXT").run();
   if (!have.has("look")) await env.DB.prepare("ALTER TABLE items ADD COLUMN look TEXT").run();
 
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
@@ -330,7 +334,7 @@ const closetLines = (items, ws = {}, today = "") =>
   items.filter((i) => i.status === "closet").sort(byLabel).map((i) => {
     const st = ws[i.id] || { n: 0, last: "" };
     const last = st.last && today ? daysBetween(st.last, today) + " days ago" : "no recent record";
-    return [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "",
+    return [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "", i.uses.length ? i.uses.join("/") : "any",
       i.rating ? i.rating + "/5" : "unrated", (i.qty > 1 ? "own " + i.qty + " " : "") + st.n + " wears", "last worn " + last].join(" | ");
   }).join("\n");
 
@@ -392,10 +396,10 @@ async function runAI(env, b) {
     }[mode];
     const prompt =
       "Build outfits only from the closet below. Use item ids exactly.\n\nMY RULES:\n" + (rules || "none") +
-      "\n\nCLOSET (id | name | category | type | colors | fabric | look | my rating | times worn | last worn):\n" + closet +
+      "\n\nCLOSET (id | name | category | type | colors | fabric | look | where I wear it | my rating | times worn | last worn):\n" + closet +
       "\n\nFAVORITES (highest rated, then most worn): " + favs.join(", ") +
       "\nBEEN A WHILE (longest since last worn): " + stale.join(", ") +
-      "\n\nUse the look descriptions so colors and patterns work together. Within each outfit only combine pieces that suit the request.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
+      "\n\nUse the look descriptions so colors and patterns work together. \"Where I wear it\" tells you which settings a piece suits (Work, Casual, Lounge, Dressy, Workout, Travel); \"any\" means unspecified. Only use pieces whose setting fits the request, and never use a \"Layer only\" piece as a visible top (it is an undershirt). Within each outfit only combine pieces that suit the request.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
       "\n\n" + plan +
       '\nReturn only JSON: {"outfits":[{"label":string,"title":string,"pieceIds":[ids],"why":string}]}. ' +
       "Each outfit has a top, bottom and shoes, plus outerwear or accessories when the request needs them. " +
@@ -444,14 +448,14 @@ async function runAI(env, b) {
       (rules || "none") +
       "\n\nSTYLES I HAVE TRIED AND THAT FIT (name | size | max price | notes):\n" + (knownLines(items) || "none") +
       "\n\nSTYLES THAT DID NOT WORK FOR ME (name | notes):\n" + (passedLines(items) || "none") +
-      "\n\nMY CLOSET (id | name | category | type | colors | fabric | look | my rating | times worn | last worn):\n" + (closetLines(items, ws, b.today) || "none") +
+      "\n\nMY CLOSET (id | name | category | type | colors | fabric | look | where I wear it | my rating | times worn | last worn):\n" + (closetLines(items, ws, b.today) || "none") +
       "\n\nLISTING:\n" + (text || "(see the attached screenshot)") +
       '\n\nJudge the listing. Match it to a tried style only when brand and style genuinely match; a different line from a brand I like is NOT a match. ' +
       'Return only JSON: {"verdict":"buy"|"try-first"|"skip","headline":string,"reasons":[string],"size":string,"price":string,' +
       '"matchedStyle":string|null,"outfitCount":number,"outfits":[{"title":string,"pieceIds":[closet ids]}],"suggestName":string,"brand":string,"category":string}. ' +
       '"buy" = matches a tried style, my size, and the price is at or under my max or reasonable for the rules. "try-first" = not tried yet. ' +
       '"skip" = a style that did not work, wrong size, fabric against my rules, or price too high. "size" says which size to buy or that it is wrong. ' +
-      '"price" is one sentence on the price. outfitCount is how many distinct outfits this piece makes with my closet; list at most 3. ' +
+      '"price" is one sentence on the price. outfitCount is how many distinct outfits this piece makes with my closet (respect the \"where I wear it\" tags and never count \"Layer only\" pieces as tops); list at most 3. ' +
       "category must be one of: " + CATS.join(", ") + ". Keep reasons to 2 to 4 short sentences.";
     const r = await callLLM(env, { system: SYSTEM, prompt, image });
     const ids = new Set(items.map((i) => i.id));
