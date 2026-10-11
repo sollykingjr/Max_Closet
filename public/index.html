@@ -460,6 +460,7 @@ function tileHtml(it){
   var on=!!state.sel[it.id];
   var img=it.photoV?'<img loading="lazy" alt="" src="'+photoUrl(it)+'">':'<span class="ttext">No photo</span>';
   var meta=[];if(it.brand)meta.push(esc(it.brand));
+  if((it.colors||[]).length)meta.push(esc(it.colors.join("/")));
   if(it.rating)meta.push('<span class="stars">'+stars(it.rating).slice(0,it.rating)+'</span>');
   if(wearsOf(it)&&state.sort==="worn")meta.push(wearsOf(it)+"×");
   return '<button type="button" class="tile" data-id="'+esc(it.id)+'" aria-pressed="'+on+'"><span class="timg">'+img+'<span class="tick" aria-hidden="true">✓</span>'+(qtyOf(it)>1?'<span class="qty">×'+qtyOf(it)+'</span>':'')+'</span>'+
