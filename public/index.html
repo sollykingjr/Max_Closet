@@ -352,10 +352,14 @@ function api(path,opts){
   var init={method:opts.method||"GET",headers:{}};
   if(opts.body!==undefined){init.headers["content-type"]="application/json";init.body=JSON.stringify(opts.body)}
   if(opts.signal)init.signal=opts.signal;
-  return fetch(path,init).then(function(r){
+  return fetch(path,init).catch(function(e){
+    if(e&&e.name==="AbortError")throw e;
+    throw new Error("Could not reach the server. If you were signed out, reload the page to sign in again.");
+  }).then(function(r){
     return r.text().then(function(t){
       var j=null;try{j=t?JSON.parse(t):null}catch(e){}
       if(!r.ok){var err=new Error((j&&j.error)||("HTTP "+r.status));err.status=r.status;throw err}
+      if(j===null&&t&&/<html/i.test(t))throw new Error("Your sign-in expired. Reload the page to sign in again.");
       return j;
     });
   });
@@ -481,7 +485,7 @@ function renderCloset(){
 }
 
 /* ---------- log what I wore (select mode on the closet grid) ---------- */
-function toast(msg){var el=$("toast");el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},2600)}
+function toast(msg,long){var el=$("toast");el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},long?9000:2600)}
 function updateDock(){
   $("dock").hidden=state.view!=="closet";
   $("dock-main").hidden=state.selecting;$("dock-select").hidden=!state.selecting;
@@ -496,7 +500,7 @@ function saveSelect(){
   $("sel-save").disabled=true;
   addWear({itemIds:ids,kind:"outfit",date:$("sel-date").value||today(),count:1}).then(function(){
     toast("Logged "+ids.length+(ids.length===1?" piece":" pieces")+" for "+niceDate($("sel-date").value||today()));endSelect();
-  }).catch(function(e){toast("Could not save: "+((e&&e.message)||"error"));$("sel-save").disabled=false});
+  }).catch(function(e){toast("Could not save: "+((e&&e.message)||"error"),true);$("sel-save").disabled=false});
 }
 
 function renderAnchor(){
