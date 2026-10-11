@@ -45,6 +45,9 @@ function toItem(r) {
     fabric: r.fabric || "",
     note: r.note || "",
     url: r.url || "",
+    rating: r.rating == null ? null : r.rating,
+    look: r.look || "",
+    photoV: r.photo_v || null,
   };
 }
 
@@ -68,22 +71,25 @@ function cleanItem(id, b) {
     fabric: str(b.fabric, 200),
     note: str(b.note, 1000),
     url: str(b.url, 500),
+    rating: ratingOrNull(b.rating),
+    look: str(b.look, 600),
   };
 }
+const ratingOrNull = (v) => {
+  const n = parseInt(v, 10);
+  return n >= 1 && n <= 5 ? n : null;
+};
 
+const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","updated_at"];
 const UPSERT =
-  "INSERT INTO items (id,name,brand,cat,subs,colors,size,status,paid,max_price,fabric,note,url,updated_at) " +
-  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
-  "ON CONFLICT(id) DO UPDATE SET name=excluded.name,brand=excluded.brand,cat=excluded.cat,subs=excluded.subs," +
-  "colors=excluded.colors,size=excluded.size,status=excluded.status,paid=excluded.paid,max_price=excluded.max_price," +
-  "fabric=excluded.fabric,note=excluded.note,url=excluded.url,updated_at=excluded.updated_at";
+  "INSERT INTO items (" + COLS.join(",") + ") VALUES (" + COLS.map(() => "?").join(",") + ") " +
+  "ON CONFLICT(id) DO UPDATE SET " + COLS.slice(1).map((c) => c + "=excluded." + c).join(",");
 
-function upsertStmt(env, c) {
-  return env.DB.prepare(UPSERT).bind(
-    c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
-    c.paid, c.max_price, c.fabric, c.note, c.url, Date.now()
-  );
-}
+const itemBinds = (c) => [
+  c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
+  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, Date.now(),
+];
+const upsertStmt = (env, c) => env.DB.prepare(UPSERT).bind(...itemBinds(c));
 
 /* ------------------------------ database ------------------------------ */
 
@@ -101,17 +107,21 @@ async function init(env) {
       "note TEXT, url TEXT, updated_at INTEGER)"
     ),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS wears (id TEXT PRIMARY KEY, date TEXT NOT NULL, count INTEGER NOT NULL, kind TEXT NOT NULL, note TEXT, created_at INTEGER)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS wear_items (wear_id TEXT NOT NULL, item_id TEXT NOT NULL, PRIMARY KEY (wear_id, item_id))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS photos (item_id TEXT PRIMARY KEY, thumb TEXT NOT NULL, full TEXT NOT NULL, updated_at INTEGER)"),
   ]);
+  // Migrate older databases: add columns introduced later.
+  const { results: cols } = await env.DB.prepare("SELECT name FROM pragma_table_info('items')").all();
+  const have = new Set(cols.map((c) => c.name));
+  if (!have.has("rating")) await env.DB.prepare("ALTER TABLE items ADD COLUMN rating INTEGER").run();
+  if (!have.has("look")) await env.DB.prepare("ALTER TABLE items ADD COLUMN look TEXT").run();
+
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
   if (seeded) return;
   // First run: load the closet imported from Notion. INSERT OR IGNORE keeps a retry safe.
-  const stmts = SEED.map((raw) => {
-    const c = cleanItem(raw.id, raw);
-    return env.DB.prepare(UPSERT.replace("INSERT INTO", "INSERT OR IGNORE INTO")).bind(
-      c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
-      c.paid, c.max_price, c.fabric, c.note, c.url, Date.now()
-    );
-  });
+  const ins = UPSERT.replace("INSERT INTO", "INSERT OR IGNORE INTO").replace(/ ON CONFLICT.*$/, "");
+  const stmts = SEED.map((raw) => env.DB.prepare(ins).bind(...itemBinds(cleanItem(raw.id, raw))));
   for (let i = 0; i < stmts.length; i += 40) await env.DB.batch(stmts.slice(i, i + 40));
   await env.DB.batch([
     env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES ('rules',?)").bind(DEFAULT_RULES),
@@ -120,10 +130,27 @@ async function init(env) {
 }
 
 async function loadAll(env) {
-  const { results } = await env.DB.prepare("SELECT * FROM items").all();
+  const { results } = await env.DB.prepare(
+    "SELECT items.*, (SELECT updated_at FROM photos WHERE item_id = items.id) AS photo_v FROM items"
+  ).all();
   const items = results.map(toItem);
   const r = await env.DB.prepare("SELECT value FROM settings WHERE key='rules'").first();
-  return { items, rules: r ? r.value : DEFAULT_RULES };
+  const { results: wr } = await env.DB.prepare("SELECT * FROM wears ORDER BY date DESC, created_at DESC LIMIT 5000").all();
+  const { results: wi } = await env.DB.prepare("SELECT * FROM wear_items").all();
+  const by = {};
+  for (const x of wi) (by[x.wear_id] ||= []).push(x.item_id);
+  const wears = wr.map((w) => ({ id: w.id, date: w.date, count: w.count, kind: w.kind, note: w.note || "", itemIds: by[w.id] || [] }));
+  return { items, rules: r ? r.value : DEFAULT_RULES, wears };
+}
+
+function wearStats(wears) {
+  const m = {};
+  for (const w of wears) for (const id of w.itemIds) {
+    const s = (m[id] ||= { n: 0, last: "" });
+    s.n += w.count;
+    if (w.kind !== "bulk" && w.date > s.last) s.last = w.date;
+  }
+  return m;
 }
 
 /* ------------------------------ AI adapter ------------------------------ */
@@ -218,9 +245,10 @@ const label = (i) => (i.brand ? i.brand + " " : "") + i.name;
 const byLabel = (a, b) => label(a).localeCompare(label(b));
 const known = (i) => i.status === "closet" || i.status === "approved";
 
-const closetLines = (items) =>
+const closetLines = (items, ws = {}) =>
   items.filter((i) => i.status === "closet").sort(byLabel).map((i) =>
-    [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/")].join(" | ") + (i.fabric ? " | " + i.fabric : "")
+    [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "",
+      (i.rating ? i.rating + "/5" : "unrated"), ((ws[i.id] && ws[i.id].n) || 0) + " wears"].join(" | ")
   ).join("\n");
 
 const knownLines = (items) =>
@@ -247,17 +275,18 @@ async function runAI(env, b) {
     return callLLM(env, { system: SYSTEM, prompt });
   }
 
-  const { items, rules } = await loadAll(env);
+  const { items, rules, wears } = await loadAll(env);
+  const ws = wearStats(wears);
 
   if (task === "outfits") {
-    const closet = closetLines(items);
+    const closet = closetLines(items, ws);
     if (!closet) throw new Error("Your closet is empty. Add pieces first.");
     const occ = str(b.occasion, 300) || "a normal day";
     const anchor = str(b.anchor, 60);
     const prompt =
       "Build outfits only from the closet below. Use item ids exactly.\n\nMY RULES:\n" + (rules || "none") +
-      "\n\nCLOSET (id | name | category | type | colors | fabric):\n" + closet +
-      "\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
+      "\n\nCLOSET (id | name | category | type | colors | fabric | look | my rating | times worn):\n" + closet +
+      "\n\nPrefer pieces I rate highly, and when it does not hurt the outfit favor pieces I have worn less. Pay attention to the look descriptions so colors and patterns work together.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
       '\n\nReturn only JSON: {"outfits":[{"title":string,"pieceIds":[ids],"why":string}]} with exactly 3 outfits. ' +
       "Each outfit has a top, bottom and shoes, plus outerwear or accessories when the request needs them. " +
       'Pieces must be real ids from the closet. Keep "why" to one short sentence.';
@@ -270,6 +299,20 @@ async function runAI(env, b) {
     return { outfits };
   }
 
+  if (task === "describe") {
+    const id = str(b.itemId, 60);
+    const it = items.find((i) => i.id === id);
+    const ph = await env.DB.prepare("SELECT full FROM photos WHERE item_id=?").bind(id).first();
+    if (!it || !ph) throw new Error("Add a photo first.");
+    const prompt =
+      "This is a photo of a clothing item: " + label(it) + ". Describe it for a stylist in at most 30 words: main colors, pattern, fabric look and weight, silhouette, and how dressy it is. " +
+      'Return only JSON: {"look":string}.';
+    const r = await callLLM(env, { system: SYSTEM, prompt, image: "data:image/jpeg;base64," + ph.full });
+    const look = str(r.look, 600);
+    await env.DB.prepare("UPDATE items SET look=?, updated_at=? WHERE id=?").bind(look, Date.now(), id).run();
+    return { look };
+  }
+
   if (task === "deal") {
     const text = str(b.listing, 8000);
     const image = typeof b.image === "string" && b.image.length < 8_000_000 ? b.image : "";
@@ -279,7 +322,7 @@ async function runAI(env, b) {
       (rules || "none") +
       "\n\nSTYLES I HAVE TRIED AND THAT FIT (name | size | max price | notes):\n" + (knownLines(items) || "none") +
       "\n\nSTYLES THAT DID NOT WORK FOR ME (name | notes):\n" + (passedLines(items) || "none") +
-      "\n\nMY CLOSET (id | name | category | type | colors | fabric):\n" + (closetLines(items) || "none") +
+      "\n\nMY CLOSET (id | name | category | type | colors | fabric | look | my rating | times worn):\n" + (closetLines(items, ws) || "none") +
       "\n\nLISTING:\n" + (text || "(see the attached screenshot)") +
       '\n\nJudge the listing. Match it to a tried style only when brand and style genuinely match; a different line from a brand I like is NOT a match. ' +
       'Return only JSON: {"verdict":"buy"|"try-first"|"skip","headline":string,"reasons":[string],"size":string,"price":string,' +
@@ -344,13 +387,77 @@ async function handleApi(request, env, url) {
       const c = cleanItem(id, body);
       if (!c) return fail(400, "Give it a name.");
       await upsertStmt(env, c).run();
-      const row = await env.DB.prepare("SELECT * FROM items WHERE id=?").bind(id).first();
+      const row = await env.DB.prepare(
+        "SELECT items.*, (SELECT updated_at FROM photos WHERE item_id = items.id) AS photo_v FROM items WHERE id=?"
+      ).bind(id).first();
       return json(toItem(row));
     }
     if (method === "DELETE") {
-      await env.DB.prepare("DELETE FROM items WHERE id=?").bind(id).run();
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM items WHERE id=?").bind(id),
+        env.DB.prepare("DELETE FROM photos WHERE item_id=?").bind(id),
+        env.DB.prepare("DELETE FROM wear_items WHERE item_id=?").bind(id),
+        env.DB.prepare("DELETE FROM wears WHERE id NOT IN (SELECT wear_id FROM wear_items)"),
+      ]);
       return json({ ok: true });
     }
+  }
+
+  const ph = /^\/api\/photo\/([^/]+)$/.exec(path);
+  if (ph) {
+    const id = decodeURIComponent(ph[1]).slice(0, 60);
+    if (method === "GET") {
+      const row = await env.DB.prepare("SELECT thumb, full FROM photos WHERE item_id=?").bind(id).first();
+      if (!row) return fail(404, "No photo.");
+      const bin = Uint8Array.from(atob(url.searchParams.get("size") === "full" ? row.full : row.thumb), (c) => c.charCodeAt(0));
+      return new Response(bin, { headers: { "content-type": "image/jpeg", "cache-control": "private, max-age=31536000, immutable" } });
+    }
+    if (method === "PUT") {
+      const body = await request.json().catch(() => null);
+      const pre = "data:image/jpeg;base64,";
+      const ok = (v, max) => typeof v === "string" && v.startsWith(pre) && v.length < max;
+      if (!body || !ok(body.thumb, 300000) || !ok(body.full, 1800000)) return fail(400, "Photo is missing or too large.");
+      const exists = await env.DB.prepare("SELECT id FROM items WHERE id=?").bind(id).first();
+      if (!exists) return fail(404, "Save the piece first.");
+      const v = Date.now();
+      await env.DB.prepare(
+        "INSERT INTO photos (item_id,thumb,full,updated_at) VALUES (?,?,?,?) ON CONFLICT(item_id) DO UPDATE SET thumb=excluded.thumb, full=excluded.full, updated_at=excluded.updated_at"
+      ).bind(id, body.thumb.slice(pre.length), body.full.slice(pre.length), v).run();
+      return json({ photoV: v });
+    }
+    if (method === "DELETE") {
+      await env.DB.prepare("DELETE FROM photos WHERE item_id=?").bind(id).run();
+      return json({ ok: true });
+    }
+  }
+
+  if (path === "/api/wears" && method === "POST") {
+    const b = await request.json().catch(() => null);
+    if (!b) return fail(400, "Bad request.");
+    const ids = [...new Set((Array.isArray(b.itemIds) ? b.itemIds : []).map((x) => str(x, 60)).filter(Boolean))].slice(0, 60);
+    if (!ids.length) return fail(400, "Pick at least one piece.");
+    const known = await env.DB.prepare("SELECT id FROM items WHERE id IN (" + ids.map(() => "?").join(",") + ")").bind(...ids).all();
+    const valid = known.results.map((r) => r.id);
+    if (!valid.length) return fail(400, "Those pieces no longer exist.");
+    const kind = b.kind === "bulk" ? "bulk" : "outfit";
+    const count = Math.min(1000, Math.max(1, parseInt(b.count, 10) || 1));
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(b.date || "") ? b.date : new Date().toISOString().slice(0, 10);
+    const id = "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO wears (id,date,count,kind,note,created_at) VALUES (?,?,?,?,?,?)").bind(id, date, count, kind, str(b.note, 300), Date.now()),
+      ...valid.map((iid) => env.DB.prepare("INSERT INTO wear_items (wear_id,item_id) VALUES (?,?)").bind(id, iid)),
+    ]);
+    return json({ id, date, count, kind, note: str(b.note, 300), itemIds: valid });
+  }
+
+  const wm = /^\/api\/wears\/([^/]+)$/.exec(path);
+  if (wm && method === "DELETE") {
+    const id = decodeURIComponent(wm[1]).slice(0, 60);
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM wear_items WHERE wear_id=?").bind(id),
+      env.DB.prepare("DELETE FROM wears WHERE id=?").bind(id),
+    ]);
+    return json({ ok: true });
   }
 
   if (path === "/api/rules" && method === "PUT") {
