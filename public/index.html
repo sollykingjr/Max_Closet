@@ -178,6 +178,7 @@ button{font:inherit}
 <section data-view="outfits" id="v-outfits" hidden>
   <div class="panel">
     <h2>Outfits from what you own</h2>
+    <div class="chips" id="chips-mode" role="group" aria-label="Outfit style"></div>
     <div class="chips" id="chips-occasion" role="group" aria-label="Occasion"></div>
     <label>Or describe it<input id="occasion" type="text" placeholder="Dinner Saturday, mid-60s, a little dressy"></label>
     <label>Build around<select id="anchor"></select></label>
@@ -210,6 +211,7 @@ button{font:inherit}
       <div class="pbox" id="p-box">No photo</div>
       <div class="actions" style="flex-direction:column;align-items:flex-start">
         <label class="btn ghost filebtn" id="p-pick">Add photo<input id="f-photo" type="file" accept="image/*" hidden></label>
+        <button type="button" class="btn ghost" id="p-paste">Paste photo</button>
         <button type="button" class="btn danger" id="p-remove" hidden>Remove photo</button>
       </div>
     </div>
@@ -222,9 +224,9 @@ button{font:inherit}
       </div>
       <span class="note" id="wear-msg"></span>
     </div>
-    <div id="fill-box" hidden>
-      <label>Fill from a listing<textarea id="fill-text" placeholder="Paste a product page or listing text"></textarea></label>
-      <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="fill-go">Fill the fields</button><span class="note" id="fill-msg"></span></div>
+    <div id="fill-box">
+      <label>Fill from a link, listing text or screenshot<textarea id="fill-text" placeholder="Paste a product link or the listing text" style="min-height:60px"></textarea></label>
+      <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="fill-go">Fill the fields</button><label class="btn ghost filebtn">Screenshot<input id="fill-shot" type="file" accept="image/*" hidden></label><span class="note" id="fill-msg"></span></div>
     </div>
     <label>Name<input id="f-name" required></label>
     <div class="grid2">
@@ -281,7 +283,7 @@ button{font:inherit}
 var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
 var CATS=["Shirt","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
-var state={items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
+var state={mode:"mix",fillShot:"",items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
   sheet:{id:null,rating:null,photo:null,removePhoto:false,look:""},w:{mode:"outfit",sel:{}}};
 var $=function(id){return document.getElementById(id)};
 
@@ -441,6 +443,7 @@ function renderAnchor(){
   var closet=state.items.filter(function(i){return i.status==="closet"}).sort(byBrandName);
   sel.innerHTML='<option value="">Nothing in particular</option>'+closet.map(function(i){return '<option value="'+esc(i.id)+'">'+esc(label(i))+'</option>'}).join("");
   sel.value=cur;
+  chips($("chips-mode"),[["mix","Mix it up"],["favorites","Favorites"],["while","Been a while"]],state.mode,function(v){state.mode=v;renderAnchor()});
   chips($("chips-occasion"),OCC.map(function(o){return [o,o]}),state.occ,function(v){state.occ=(state.occ===v?"":v);$("occasion").value=state.occ;renderAnchor()});
 }
 
@@ -565,7 +568,7 @@ function openSheet(id,preset){
   $("f-look").value=d.look||"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
-  $("fill-box").hidden=!!it;
+  state.fillShot="";
   $("wear-box").hidden=!it;
   renderRatingPick();renderPhotoBox();refreshSheetStats();
   $("sheet-back").hidden=false;
@@ -638,8 +641,8 @@ function resizeTo(file,max,q){
 }
 function readImage(file){return resizeTo(file,1400,0.82)}
 function pickPhoto(file){
-  if(!file)return;
-  Promise.all([resizeTo(file,256,0.78),resizeTo(file,900,0.8)]).then(function(r){
+  if(!file)return Promise.resolve();
+  return Promise.all([resizeTo(file,256,0.78),resizeTo(file,900,0.8)]).then(function(r){
     state.sheet.photo={thumb:r[0],full:r[1]};state.sheet.removePhoto=false;renderPhotoBox();
   }).catch(function(e){$("sheet-err").textContent=(e&&e.message)||"Could not read that image."});
 }
@@ -656,12 +659,12 @@ function suggestOutfits(){
   outCtl=new AbortController();
   $("go-outfits").disabled=true;$("stop-outfits").hidden=false;
   $("out-outfits").innerHTML='<p class="thinking">Thinking...</p>';
-  api("/api/ai",{method:"POST",signal:outCtl.signal,body:{task:"outfits",occasion:$("occasion").value.trim(),anchor:$("anchor").value}}).then(function(r){
+  api("/api/ai",{method:"POST",signal:outCtl.signal,body:{task:"outfits",mode:state.mode,today:today(),occasion:$("occasion").value.trim(),anchor:$("anchor").value}}).then(function(r){
     var list=r&&r.outfits;
     if(!Array.isArray(list)||!list.length)throw new Error("No outfits came back. Try again.");
     $("out-outfits").innerHTML='<div class="cards">'+list.slice(0,3).map(function(o,idx){
       var names=(o.pieceIds||[]).map(itemName).filter(Boolean);
-      return '<div class="card"><h3>'+esc(o.title||"Outfit")+'</h3><ul>'+names.map(function(n){return '<li>'+esc(n)+'</li>'}).join("")+'</ul>'+(o.why?'<span class="note">'+esc(o.why)+'</span>':'')+
+      return '<div class="card">'+(o.label?'<span class="pill closet" style="align-self:flex-start">'+esc(o.label)+'</span>':'')+'<h3>'+esc(o.title||"Outfit")+'</h3><ul>'+names.map(function(n){return '<li>'+esc(n)+'</li>'}).join("")+'</ul>'+(o.why?'<span class="note">'+esc(o.why)+'</span>':'')+
         '<div class="actions"><button type="button" class="btn ghost wore" data-i="'+idx+'">I wore this today</button></div></div>';
     }).join("")+'</div>';
     Array.prototype.forEach.call($("out-outfits").querySelectorAll(".wore"),function(b){b.onclick=function(){
@@ -677,7 +680,7 @@ function checkDeal(){
   $("go-check").disabled=true;$("stop-check").hidden=false;
   $("out-check").innerHTML='<p class="thinking">Thinking...</p>';
   (file?readImage(file):Promise.resolve("")).then(function(image){
-    return api("/api/ai",{method:"POST",signal:chkCtl.signal,body:{task:"deal",listing:text,image:image}});
+    return api("/api/ai",{method:"POST",signal:chkCtl.signal,body:{task:"deal",today:today(),listing:text,image:image}});
   }).then(showVerdict).catch(function(e){var m=errCopy(e);$("out-check").innerHTML=m?'<p class="err">'+esc(m)+'</p>':""}).then(function(){$("go-check").disabled=false;$("stop-check").hidden=true});
 }
 function showVerdict(r){
@@ -701,13 +704,20 @@ function showVerdict(r){
 
 function fillFromListing(){
   var t=$("fill-text").value.trim();
-  if(!t){$("fill-msg").textContent="Paste some listing text first.";return}
-  $("fill-msg").textContent="Reading...";$("fill-go").disabled=true;
-  api("/api/ai",{method:"POST",body:{task:"fill",text:t}}).then(function(r){
-    if(r.name)$("f-name").value=r.name;if(r.brand)$("f-brand").value=r.brand;
-    if(CATS.indexOf(r.category)>-1)$("f-cat").value=r.category;
-    if((r.colors||[]).length)$("f-colors").value=r.colors.join(", ");if((r.subs||[]).length)$("f-subs").value=r.subs.join(", ");
-    if(r.fabric)$("f-fabric").value=r.fabric;if(r.size)$("f-size").value=r.size;if(r.paid!=null)$("f-paid").value=r.paid;
+  if(!t&&!state.fillShot){$("fill-msg").textContent="Paste a link, listing text or add a screenshot first.";return}
+  var m=/https?:\/\/\S+/.exec(t),url=m?m[0]:"",rest=m?t.replace(url,"").trim():t;
+  $("fill-msg").textContent=url?"Reading the page...":"Reading...";$("fill-go").disabled=true;
+  api("/api/ai",{method:"POST",body:{task:"fill",url:url,text:rest,image:state.fillShot}}).then(function(r){
+    function setIf(id,v){if(v&&!$(id).value.trim())$(id).value=v}
+    setIf("f-name",r.name);setIf("f-brand",r.brand);
+    if(CATS.indexOf(r.category)>-1&&!$("f-cat").value)$("f-cat").value=r.category;
+    if((r.colors||[]).length)setIf("f-colors",r.colors.join(", "));if((r.subs||[]).length)setIf("f-subs",r.subs.join(", "));
+    setIf("f-fabric",r.fabric);setIf("f-size",r.size);setIf("f-look",r.look);
+    var it=state.editing&&itemById(state.editing);
+    var hasPhoto=!!state.sheet.photo||(it&&it.photoV&&!state.sheet.removePhoto);
+    if(r.photo&&!hasPhoto){
+      return fetch(r.photo).then(function(x){return x.blob()}).then(pickPhoto).then(function(){$("fill-msg").textContent="Filled, with the product photo. Check the fields."});
+    }
     $("fill-msg").textContent="Filled. Check the fields.";
   }).catch(function(e){$("fill-msg").textContent=errCopy(e)||""}).then(function(){$("fill-go").disabled=false});
 }
@@ -732,6 +742,23 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){if(!$("shee
 $("go-outfits").onclick=suggestOutfits;$("stop-outfits").onclick=function(){if(outCtl)outCtl.abort()};
 $("go-check").onclick=checkDeal;$("stop-check").onclick=function(){if(chkCtl)chkCtl.abort()};
 $("fill-go").onclick=fillFromListing;
+$("fill-shot").onchange=function(){var f=this.files&&this.files[0];this.value="";if(!f)return;$("fill-msg").textContent="Preparing screenshot...";readImage(f).then(function(d){state.fillShot=d;$("fill-msg").textContent="Screenshot added. Tap Fill the fields."}).catch(function(e){$("fill-msg").textContent=errCopy(e)})};
+$("p-paste").onclick=function(){
+  var err=$("sheet-err");err.textContent="";
+  if(!navigator.clipboard||!navigator.clipboard.read){err.textContent="Pasting images is not supported here. Save the image to Photos and use Add photo.";return}
+  navigator.clipboard.read().then(function(list){
+    for(var i=0;i<list.length;i++){
+      var ty=list[i].types.filter(function(x){return x.indexOf("image/")===0})[0];
+      if(ty)return list[i].getType(ty).then(pickPhoto);
+    }
+    err.textContent="No image on the clipboard. Copy an image first.";
+  }).catch(function(){err.textContent="Clipboard access was blocked. Allow paste when asked, or use Add photo."});
+};
+document.addEventListener("paste",function(e){
+  if($("sheet-back").hidden)return;
+  var f=e.clipboardData&&e.clipboardData.files&&e.clipboardData.files[0];
+  if(f&&/^image\//.test(f.type)){e.preventDefault();pickPhoto(f)}
+});
 $("rules").addEventListener("input",saveRules);
 $("occasion").addEventListener("input",function(){state.occ="";renderAnchor()});
 $("f-photo").onchange=function(){pickPhoto(this.files&&this.files[0]);this.value=""};

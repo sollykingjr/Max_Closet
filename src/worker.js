@@ -239,17 +239,71 @@ async function callLLM(env, { system, prompt, image }) {
   return extractJson(text);
 }
 
+/* ------------------------------ product pages ------------------------------ */
+
+const BROWSER_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1";
+
+function meta(html, key) {
+  const re = new RegExp("<meta[^>]+(?:property|name)=[\"']" + key + "[\"'][^>]*>", "i");
+  const tag = (re.exec(html) || [""])[0];
+  const m = /content=["']([^"']*)["']/i.exec(tag);
+  return m ? m[1].replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'") : "";
+}
+
+async function readPage(raw) {
+  let u;
+  try { u = new URL(raw); } catch (_) { throw new Error("That does not look like a link."); }
+  if (!/^https?:$/.test(u.protocol)) throw new Error("Only http and https links work.");
+  let res;
+  try {
+    res = await fetch(u.toString(), { headers: { "user-agent": BROWSER_UA, accept: "text/html,application/xhtml+xml", "accept-language": "en-US,en;q=0.9" }, redirect: "follow" });
+  } catch (_) { throw new Error("Could not reach that page. Paste the listing text or a screenshot instead."); }
+  if (!res.ok) throw new Error("That site blocked the request (" + res.status + "). Paste the listing text or a screenshot instead.");
+  const html = (await res.text()).slice(0, 700000);
+  const parts = [];
+  const title = meta(html, "og:title") || (/<title[^>]*>([^<]*)/i.exec(html) || [])[1] || "";
+  if (title) parts.push("Title: " + title.trim());
+  const desc = meta(html, "og:description") || meta(html, "description");
+  if (desc) parts.push("Description: " + desc.trim());
+  for (const m of html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)) {
+    if (/"Product"/.test(m[1])) parts.push("Structured data: " + m[1].replace(/\s+/g, " ").slice(0, 2500));
+  }
+  const body = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ").trim();
+  parts.push("Page text: " + body.slice(0, 3000));
+  if (parts.length < 2 || body.length < 80) throw new Error("That page had no readable product details. Paste the listing text or a screenshot instead.");
+
+  let photo = null;
+  const img = meta(html, "og:image") || meta(html, "twitter:image");
+  if (img) {
+    try {
+      const ir = await fetch(new URL(img, u).toString(), { headers: { "user-agent": BROWSER_UA } });
+      const buf = ir.ok ? await ir.arrayBuffer() : null;
+      const type = ir.headers.get("content-type") || "";
+      if (buf && buf.byteLength < 3_000_000 && /^image\/(jpeg|png|webp)/.test(type)) {
+        let bin = "";
+        const bytes = new Uint8Array(buf);
+        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        photo = "data:" + type.split(";")[0] + ";base64," + btoa(bin);
+      }
+    } catch (_) { /* photo is optional */ }
+  }
+  return { text: parts.join("\n"), photo };
+}
+
 /* ------------------------------ prompts ------------------------------ */
 
 const label = (i) => (i.brand ? i.brand + " " : "") + i.name;
 const byLabel = (a, b) => label(a).localeCompare(label(b));
 const known = (i) => i.status === "closet" || i.status === "approved";
 
-const closetLines = (items, ws = {}) =>
-  items.filter((i) => i.status === "closet").sort(byLabel).map((i) =>
-    [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "",
-      (i.rating ? i.rating + "/5" : "unrated"), ((ws[i.id] && ws[i.id].n) || 0) + " wears"].join(" | ")
-  ).join("\n");
+const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+const closetLines = (items, ws = {}, today = "") =>
+  items.filter((i) => i.status === "closet").sort(byLabel).map((i) => {
+    const st = ws[i.id] || { n: 0, last: "" };
+    const last = st.last && today ? daysBetween(st.last, today) + " days ago" : "no recent record";
+    return [i.id, label(i), i.cat, i.subs.join("/"), i.colors.join("/"), i.fabric || "", i.look || "",
+      i.rating ? i.rating + "/5" : "unrated", st.n + " wears", "last worn " + last].join(" | ");
+  }).join("\n");
 
 const knownLines = (items) =>
   items.filter(known).sort(byLabel).map((i) =>
@@ -266,34 +320,61 @@ const SYSTEM = "You are a careful personal stylist and secondhand-shopping assis
 async function runAI(env, b) {
   const task = b.task;
   if (task === "fill") {
-    const text = str(b.text, 6000);
-    if (!text) throw new Error("Paste some listing text first.");
+    let text = str(b.text, 6000);
+    const url = str(b.url, 600);
+    let photo = null;
+    const image = typeof b.image === "string" && b.image.length < 8_000_000 ? b.image : "";
+    if (url) {
+      const page = await readPage(url);
+      text = (page.text + "\n" + text).trim();
+      photo = page.photo;
+    }
+    if (!text && !image) throw new Error("Paste a link, listing text or a screenshot first.");
     const prompt =
-      'Extract clothing details from this listing text. Return only JSON: {"name":string,"brand":string,"category":one of ' +
-      CATS.join("/") + ',"colors":[string],"subs":[string],"fabric":string,"paid":number|null,"size":string}. ' +
-      'Use empty strings when unknown. "name" excludes the brand.\n\n' + text;
-    return callLLM(env, { system: SYSTEM, prompt });
+      'Extract clothing details from this listing or product page. Return only JSON: {"name":string,"brand":string,"category":one of ' +
+      CATS.join("/") + ',"colors":[string],"subs":[string],"fabric":string,"size":string,"price":number|null,' +
+      '"look":string}. Use empty strings when unknown. "name" excludes the brand. "subs" are style types like Oxford, Polo, Chino. ' +
+      '"look" is at most 30 words for a stylist: main colors, pattern, fabric look and weight, silhouette, how dressy. "price" is the listed price.\n\n' + text.slice(0, 7000);
+    const r = await callLLM(env, { system: SYSTEM, prompt, image });
+    return {
+      name: str(r.name, 200), brand: str(r.brand, 100), category: CATS.includes(r.category) ? r.category : "",
+      colors: strList(r.colors), subs: strList(r.subs), fabric: str(r.fabric, 200), size: str(r.size, 40),
+      price: numOrNull(r.price), look: str(r.look, 600), photo,
+    };
   }
 
   const { items, rules, wears } = await loadAll(env);
   const ws = wearStats(wears);
 
   if (task === "outfits") {
-    const closet = closetLines(items, ws);
+    const today = /^\d{4}-\d{2}-\d{2}$/.test(b.today || "") ? b.today : new Date().toISOString().slice(0, 10);
+    const closet = closetLines(items, ws, today);
     if (!closet) throw new Error("Your closet is empty. Add pieces first.");
     const occ = str(b.occasion, 300) || "a normal day";
     const anchor = str(b.anchor, 60);
+    const mode = ["favorites", "while"].includes(b.mode) ? b.mode : "mix";
+    const owned = items.filter((i) => i.status === "closet");
+    const favs = [...owned].sort((x, y) => (y.rating || 0) - (x.rating || 0) || ((ws[y.id] || {}).n || 0) - ((ws[x.id] || {}).n || 0)).slice(0, 25).map((i) => i.id);
+    const stale = [...owned].sort((x, y) => ((ws[x.id] || {}).last || "") < ((ws[y.id] || {}).last || "") ? -1 : 1).slice(0, 25).map((i) => i.id);
+    const plan = {
+      mix: "Return exactly 3 outfits in this order. 1) label \"Favorites\": built from my FAVORITES list. 2) label \"Been a while\": built mainly from my BEEN A WHILE list. 3) label \"Something different\": a fresh combination that reuses none of the pieces from outfits 1 and 2.",
+      favorites: "Return exactly 3 different outfits, each with label \"Favorites\", built mainly from my FAVORITES list.",
+      while: "Return exactly 3 different outfits, each with label \"Been a while\", built mainly from my BEEN A WHILE list.",
+    }[mode];
     const prompt =
       "Build outfits only from the closet below. Use item ids exactly.\n\nMY RULES:\n" + (rules || "none") +
-      "\n\nCLOSET (id | name | category | type | colors | fabric | look | my rating | times worn):\n" + closet +
-      "\n\nPrefer pieces I rate highly, and when it does not hurt the outfit favor pieces I have worn less. Pay attention to the look descriptions so colors and patterns work together.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
-      '\n\nReturn only JSON: {"outfits":[{"title":string,"pieceIds":[ids],"why":string}]} with exactly 3 outfits. ' +
+      "\n\nCLOSET (id | name | category | type | colors | fabric | look | my rating | times worn | last worn):\n" + closet +
+      "\n\nFAVORITES (highest rated, then most worn): " + favs.join(", ") +
+      "\nBEEN A WHILE (longest since last worn): " + stale.join(", ") +
+      "\n\nUse the look descriptions so colors and patterns work together. Within each outfit only combine pieces that suit the request.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
+      "\n\n" + plan +
+      '\nReturn only JSON: {"outfits":[{"label":string,"title":string,"pieceIds":[ids],"why":string}]}. ' +
       "Each outfit has a top, bottom and shoes, plus outerwear or accessories when the request needs them. " +
       'Pieces must be real ids from the closet. Keep "why" to one short sentence.';
     const out = await callLLM(env, { system: SYSTEM, prompt });
     const ids = new Set(items.map((i) => i.id));
     const outfits = (Array.isArray(out.outfits) ? out.outfits : []).slice(0, 3).map((o) => ({
-      title: str(o.title, 120), why: str(o.why, 400),
+      label: str(o.label, 40), title: str(o.title, 120), why: str(o.why, 400),
       pieceIds: (Array.isArray(o.pieceIds) ? o.pieceIds : []).filter((x) => ids.has(x)),
     }));
     return { outfits };
@@ -322,7 +403,7 @@ async function runAI(env, b) {
       (rules || "none") +
       "\n\nSTYLES I HAVE TRIED AND THAT FIT (name | size | max price | notes):\n" + (knownLines(items) || "none") +
       "\n\nSTYLES THAT DID NOT WORK FOR ME (name | notes):\n" + (passedLines(items) || "none") +
-      "\n\nMY CLOSET (id | name | category | type | colors | fabric | look | my rating | times worn):\n" + (closetLines(items, ws) || "none") +
+      "\n\nMY CLOSET (id | name | category | type | colors | fabric | look | my rating | times worn | last worn):\n" + (closetLines(items, ws, b.today) || "none") +
       "\n\nLISTING:\n" + (text || "(see the attached screenshot)") +
       '\n\nJudge the listing. Match it to a tried style only when brand and style genuinely match; a different line from a brand I like is NOT a match. ' +
       'Return only JSON: {"verdict":"buy"|"try-first"|"skip","headline":string,"reasons":[string],"size":string,"price":string,' +
