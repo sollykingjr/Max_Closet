@@ -3,7 +3,7 @@
   "id": "a001",
   "name": "Wyatt Shirt - Platinum Etch",
   "brand": "Rails",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -506,7 +506,7 @@
   "id": "c030",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 1)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -522,7 +522,7 @@
   "id": "c031",
   "name": "Precision Tee - Black",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -537,7 +537,7 @@
   "id": "c032",
   "name": "Short-Sleeve Linen - Blue-White Striped",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -554,7 +554,7 @@
   "id": "c033",
   "name": "Long-Sleeve Newport Cloud Henley - Charcoal",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Long Sleeves",
   "subs": [
    "Long Sleeve"
   ],
@@ -569,7 +569,7 @@
   "id": "c034",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 2)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -585,7 +585,7 @@
   "id": "c035",
   "name": "Movement Shirt - Berry Plaid",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -603,7 +603,7 @@
   "id": "c036",
   "name": "Shoreline UPF Tee",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt",
    "Workout"
@@ -620,7 +620,7 @@
   "id": "c037",
   "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt (black, 1)",
   "brand": "Banana Republic",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -636,7 +636,7 @@
   "id": "c038",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 3)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -652,7 +652,7 @@
   "id": "c039",
   "name": "Cloud Polo - Orange - Blue Stripes",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -668,7 +668,7 @@
   "id": "c040",
   "name": "Cashmere Quarter-Zip Sweater - Coal",
   "brand": "Bloomingdale's",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Quarter Zip",
    "Cashmere"
@@ -684,7 +684,7 @@
   "id": "c041",
   "name": "Regular Fit Textured-Knit Polo Shirt",
   "brand": "H&M",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -700,7 +700,7 @@
   "id": "c042",
   "name": "Crown Comfort Quarter-Zip Pullover",
   "brand": "Peter Millar",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Quarter Zip"
   ],
@@ -715,7 +715,7 @@
   "id": "c043",
   "name": "Cashmere Quarter-Zip Sweater - Navy",
   "brand": "Bloomingdale's",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Quarter Zip",
    "Cashmere"
@@ -731,7 +731,7 @@
   "id": "c044",
   "name": "Long-Sleeve Newport Cloud Henley - Ivory",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Long Sleeves",
   "subs": [
    "Long Sleeve"
   ],
@@ -747,7 +747,7 @@
   "id": "c045",
   "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt - Blue Gray",
   "brand": "Banana Republic",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -763,7 +763,7 @@
   "id": "c046",
   "name": "Movement Shirt - Blue White Plaid",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -781,7 +781,7 @@
   "id": "c047",
   "name": "Boxy Sun-Faded Cotton Crew-Neck T-Shirt (black, 2)",
   "brand": "Banana Republic",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -797,7 +797,7 @@
   "id": "c048",
   "name": "Flowknit Breeze Performance Tee - Charcoal",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Activewear",
   "subs": [
    "Workout",
    "Performance"
@@ -814,7 +814,7 @@
   "id": "c049",
   "name": "Sunwashed Midweight Organic Hoodie",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweatshirt"
   ],
@@ -830,7 +830,7 @@
   "id": "c050",
   "name": "Movement Shirt - Grey Sky Gingham",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -848,7 +848,7 @@
   "id": "c051",
   "name": "Blue Plaid Button Down",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -865,7 +865,7 @@
   "id": "c052",
   "name": "Precision Tee - Grey",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -880,7 +880,7 @@
   "id": "c053",
   "name": "Movement Shirt Classic Fit - Atlantic Sky",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -897,7 +897,7 @@
   "id": "c054",
   "name": "Button-Down Collar Stretch Washed Oxford Shirt - White",
   "brand": "Charles Tyrwhitt",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Oxford",
    "Button Down"
@@ -914,7 +914,7 @@
   "id": "c055",
   "name": "Midweight Cotton T-Shirt - Heather Grey",
   "brand": "Banana Republic Factory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -930,7 +930,7 @@
   "id": "c056",
   "name": "Pure Linen Shirt - Oatmeal",
   "brand": "Charles Tyrwhitt",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Linen"
@@ -947,7 +947,7 @@
   "id": "c057",
   "name": "100% Pima Cotton Luxe Touch Tee - Faded Indigo",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -963,7 +963,7 @@
   "id": "c058",
   "name": "Flowknit Breeze Performance Tee - Heather Black",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Activewear",
   "subs": [
    "Workout",
    "Performance"
@@ -980,7 +980,7 @@
   "id": "c059",
   "name": "Precision Tee - Eclipse",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -995,7 +995,7 @@
   "id": "c060",
   "name": "California Oxford Shirt - Charcoal",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Oxford"
@@ -1012,7 +1012,7 @@
   "id": "c061",
   "name": "Stretch Oxford Shirt",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Oxford"
@@ -1029,7 +1029,7 @@
   "id": "c062",
   "name": "Flame Classic Fit Short Sleeve Tee - Navy",
   "brand": "rag & bone",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1045,7 +1045,7 @@
   "id": "c063",
   "name": "Classic Stretch Selvage Shirt",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -1061,7 +1061,7 @@
   "id": "c064",
   "name": "Henley T-Shirt - Orange",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1076,7 +1076,7 @@
   "id": "c065",
   "name": "Tyrwhitt Pique Polo - Navy",
   "brand": "Charles Tyrwhitt",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -1092,7 +1092,7 @@
   "id": "c066",
   "name": "Bron Polo - Cosmos Slub Cotton - Pink",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -1108,7 +1108,7 @@
   "id": "c067",
   "name": "Movement Shirt - Black White Gingham",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -1126,7 +1126,7 @@
   "id": "c068",
   "name": "Essential T-Shirt",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1142,7 +1142,7 @@
   "id": "c069",
   "name": "Button-Down Collar Stretch Washed Oxford Shirt - Sky Blue",
   "brand": "Charles Tyrwhitt",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Oxford",
    "Button Down"
@@ -1159,7 +1159,7 @@
   "id": "c070",
   "name": "Relaxed Heavy Slub Tee - Dusty Olive",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1175,7 +1175,7 @@
   "id": "c071",
   "name": "Henley T-Shirt - Red",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1190,7 +1190,7 @@
   "id": "c072",
   "name": "Long-Sleeve Newport Cloud Henley - Light Blue Heather",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Long Sleeves",
   "subs": [
    "Long Sleeve"
   ],
@@ -1206,7 +1206,7 @@
   "id": "c073",
   "name": "Cloud Cotton Polo - Red",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -1221,7 +1221,7 @@
   "id": "c074",
   "name": "Bron Polo - Cosmos Slub Cotton - Blue",
   "brand": "Theory",
-  "cat": "Shirt",
+  "cat": "Polos",
   "subs": [
    "Polo"
   ],
@@ -1237,7 +1237,7 @@
   "id": "c075",
   "name": "Movement Dress Shirt - Rose Bay Gingham",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Dress Shirt",
@@ -1257,7 +1257,7 @@
   "id": "c076",
   "name": "Pure Linen Shirt - Navy",
   "brand": "Charles Tyrwhitt",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Linen"
@@ -1274,7 +1274,7 @@
   "id": "c077",
   "name": "Midweight Cotton T-Shirt - Navy",
   "brand": "Banana Republic Factory",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1290,7 +1290,7 @@
   "id": "c078",
   "name": "Blue Stretch Oxford",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Performance"
@@ -1306,7 +1306,7 @@
   "id": "c079",
   "name": "Movement Dress Shirt - Lavender Valley Stripe",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Dress Shirt",
@@ -1324,7 +1324,7 @@
   "id": "c080",
   "name": "Cotton Heavyweight Relaxed Fit Jersey Tee - Heather Grey",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1340,7 +1340,7 @@
   "id": "c081",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 4)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1356,7 +1356,7 @@
   "id": "c082",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 5)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1372,7 +1372,7 @@
   "id": "c083",
   "name": "100% Pima Cotton Luxe Touch V-Neck Tee (white, 6)",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1388,7 +1388,7 @@
   "id": "c084",
   "name": "Classic Heavy Slub Pocket Tee - Forged Iron",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -1404,7 +1404,7 @@
   "id": "c085",
   "name": "Stretch Sweater Fleece Shirt - Charcoal Twill",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Long Sleeve",
    "Sweater",
@@ -1423,7 +1423,7 @@
   "id": "c086",
   "name": "Classic Stretch Selvage Long Sleeve Shirt - Blue Mini Stripe",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -1440,7 +1440,7 @@
   "id": "c087",
   "name": "Textured Knit Shirt in Oxblood",
   "brand": "The Normal Brand",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -1457,7 +1457,7 @@
   "id": "c088",
   "name": "Coastline Knit Plaid Button Down Shirt - Bear Mountain Houndstooth",
   "brand": "Faherty",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -1894,7 +1894,7 @@
   "id": "p007",
   "name": "XC4 Performance Shirt - White/Navy Gingham",
   "brand": "Johnston & Murphy",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Performance",
    "Button Down"
@@ -1912,7 +1912,7 @@
   "id": "p008",
   "name": "Everyday Oxford Shirt - Blue Classic Stripe",
   "brand": "Bonobos",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Oxford"
@@ -1930,7 +1930,7 @@
   "id": "p009",
   "name": "Corbet Ribbed Hoodie",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweatshirt"
   ],
@@ -1946,7 +1946,7 @@
   "id": "p010",
   "name": "The Jack - Indigo Stripe",
   "brand": "Taylor Stitch",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Oxford",
    "Button Down"
@@ -1964,7 +1964,7 @@
   "id": "p011",
   "name": "Everyday Shirt - Navy Neps Texture",
   "brand": "Bonobos",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Stretch"
@@ -1981,7 +1981,7 @@
   "id": "p012",
   "name": "Everyday Shirt - Navy Plum Gingham",
   "brand": "Bonobos",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Stretch"
@@ -1999,7 +1999,7 @@
   "id": "p013",
   "name": "Premium Heavyweight 2.0 Tee",
   "brand": "Abercrombie & Fitch",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -2015,7 +2015,7 @@
   "id": "p014",
   "name": "The Jack - Fatigued Olive Waffle",
   "brand": "Taylor Stitch",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Waffle"
@@ -2032,7 +2032,7 @@
   "id": "p015",
   "name": "Mongolian Cashmere Fisherman Pullover Hoodie in Black",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweatshirt"
   ],
@@ -2048,7 +2048,7 @@
   "id": "p016",
   "name": "Organic Cotton Cashmere Waffle Hoodie in Charcoal",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweatshirt"
   ],
@@ -2064,7 +2064,7 @@
   "id": "p017",
   "name": "Organic Cotton Stretch Textured Twill Shirt - Charcoal",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Twill"
@@ -2081,7 +2081,7 @@
   "id": "p018",
   "name": "Pacifica Stretch Twill Shirt - Deep Navy",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Twill"
@@ -2098,7 +2098,7 @@
   "id": "p019",
   "name": "California Oxford Shirt - Vintage Indigo",
   "brand": "Marine Layer",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Oxford",
    "Button Down"
@@ -2115,7 +2115,7 @@
   "id": "p020",
   "name": "Surplus Heavy T-Shirt - Espresso",
   "brand": "Flint and Tinder",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -2131,7 +2131,7 @@
   "id": "p021",
   "name": "State of Mind Shirt - Slim - Smokey Olive Plaid",
   "brand": "Rhone",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -2148,7 +2148,7 @@
   "id": "p022",
   "name": "Textured Knit Shirt in Java",
   "brand": "The Normal Brand",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -2164,7 +2164,7 @@
   "id": "p023",
   "name": "Tomlin Cotton Dobby Button-Up Shirt",
   "brand": "rag & bone",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -2180,7 +2180,7 @@
   "id": "p024",
   "name": "PatinaTech T-Shirt - Grey",
   "brand": "Proof",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt",
    "Tech"
@@ -2245,7 +2245,7 @@
   "id": "r001",
   "name": "Regular Oxford Shirt - Light Blue Striped",
   "brand": "H&M",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Oxford"
@@ -2364,7 +2364,7 @@
   "id": "t007",
   "name": "The Jack - Coal Waffle",
   "brand": "Taylor Stitch",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Waffle"
@@ -2381,7 +2381,7 @@
   "id": "t008",
   "name": "California Oxford Button Down - Mini Gingham",
   "brand": "Buck Mason",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Oxford"
@@ -2399,7 +2399,7 @@
   "id": "t009",
   "name": "Cotton Ribbed Crewneck Sweater in Heather Brown",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweater"
   ],
@@ -2415,7 +2415,7 @@
   "id": "t010",
   "name": "Australian Merino Wool Half Zip Sweater in Coffee Bean Brown",
   "brand": "Quince",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Quarter Zip",
    "Sweater"
@@ -2432,7 +2432,7 @@
   "id": "t011",
   "name": "Vance Shirt - Navy Ivory Check",
   "brand": "Rails",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down",
    "Twill"
@@ -2450,7 +2450,7 @@
   "id": "t012",
   "name": "Isles Linen Shirt - Ghost Grey Houndstooth",
   "brand": "Wills",
-  "cat": "Shirt",
+  "cat": "Button Downs",
   "subs": [
    "Button Down"
   ],
@@ -2466,7 +2466,7 @@
   "id": "t013",
   "name": "American Heavyweight Pocket T-Shirt - Delicioso",
   "brand": "Flint and Tinder",
-  "cat": "Shirt",
+  "cat": "T-Shirts",
   "subs": [
    "T-Shirt"
   ],
@@ -2482,7 +2482,7 @@
   "id": "t014",
   "name": "Puremeso Essential Hoodie in Taupe",
   "brand": "The Normal Brand",
-  "cat": "Shirt",
+  "cat": "Sweaters",
   "subs": [
    "Sweatshirt"
   ],

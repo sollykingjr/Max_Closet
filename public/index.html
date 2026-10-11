@@ -248,24 +248,22 @@ header.top{padding-block:10px 6px}
       <label>Price paid<input id="f-paid" inputmode="decimal" placeholder="$"></label>
     </div>
     <div class="field"><span class="flabel">How much I like it</span><div class="starpick" id="f-rating" role="group" aria-label="Rating"></div></div>
-    <details id="more"><summary>More details</summary><div class="morebody">
-      <div class="grid2">
-        <label>Category<select id="f-cat"></select></label>
-        <label>Status<select id="f-status"></select></label>
-      </div>
-      <div class="grid2">
-        <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
-        <label>Max price (secondhand)<input id="f-max" inputmode="decimal" placeholder="$"></label>
-      </div>
-      <div class="grid2">
-        <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
-        <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
-      </div>
-      <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
-      <label>What it looks like (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
-      <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
-      <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
-    </div></details>
+    <div class="grid2">
+      <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
+      <label>Category<select id="f-cat"></select></label>
+    </div>
+    <label>Description (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
+    <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
+    <div class="grid2">
+      <label>Status<select id="f-status"></select></label>
+      <label>Max price (secondhand)<input id="f-max" inputmode="decimal" placeholder="$"></label>
+    </div>
+    <div class="grid2">
+      <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
+      <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
+    </div>
+    <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
+    <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
     <datalist id="brand-list"></datalist>
     <p class="err" id="sheet-err" role="alert"></p>
     <div class="actions">
@@ -303,7 +301,8 @@ header.top{padding-block:10px 6px}
 (function(){
 "use strict";
 var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
-var CATS=["Shirt","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
+var CATS=["T-Shirts","Button Downs","Polos","Long Sleeves","Sweaters","Activewear","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
+function catIdx(c){var i=CATS.indexOf(c);return i<0?99:i}
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
 var state={selecting:false,sel:{},mode:"mix",fillShot:"",items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
   sheet:{id:null,rating:null,photo:null,removePhoto:false,look:""},w:{mode:"outfit",sel:{}}};
@@ -418,7 +417,7 @@ function renderLog(){
 
 function sortItems(items,mode){
   var cmp={
-    cat:function(a,b){return (a.cat||"~").localeCompare(b.cat||"~")||(a.subs&&a.subs[0]||"").localeCompare(b.subs&&b.subs[0]||"")||a.name.localeCompare(b.name)},
+    cat:function(a,b){return catIdx(a.cat)-catIdx(b.cat)||(a.subs&&a.subs[0]||"").localeCompare(b.subs&&b.subs[0]||"")||a.name.localeCompare(b.name)},
     rating:function(a,b){return (b.rating||0)-(a.rating||0)||byBrandName(a,b)},
     worn:function(a,b){return wearsOf(b)-wearsOf(a)||byBrandName(a,b)},
     least:function(a,b){return wearsOf(a)-wearsOf(b)||byBrandName(a,b)},
@@ -612,7 +611,7 @@ function openSheet(id,preset){
   $("f-look").value=d.look||"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
-  state.fillShot="";$("fill-box").hidden=!!it;$("more").open=false;
+  state.fillShot="";$("fill-box").hidden=!!it;
   $("wear-box").hidden=!it;
   renderRatingPick();renderPhotoBox();
   $("sheet-back").hidden=false;refreshSheetStats();

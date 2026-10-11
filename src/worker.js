@@ -3,7 +3,21 @@
 import SEED from "./seed.json";
 
 const STATUSES = ["closet", "approved", "try", "passed", "retired"];
-const CATS = ["Shirt", "Pants", "Shorts", "Outerwear", "Blazer", "Shoes", "Accessories", "Bathing Suit", "Socks"];
+const CATS = ["T-Shirts", "Button Downs", "Polos", "Long Sleeves", "Sweaters", "Activewear", "Pants", "Shorts", "Outerwear", "Blazer", "Shoes", "Accessories", "Bathing Suit", "Socks"];
+
+// Older data used one "Shirt" category. Split it by the style types on the piece.
+function migrateCat(cat, subs) {
+  if (cat !== "Shirt") return cat;
+  const s = new Set((subs || []).map((x) => String(x)));
+  const has = (...k) => k.some((x) => s.has(x));
+  if (has("Button Down", "Oxford", "Dress Shirt")) return "Button Downs";
+  if (has("Polo")) return "Polos";
+  if (has("Quarter Zip", "Sweater", "Sweatshirt")) return "Sweaters";
+  if (has("Long Sleeve")) return "Long Sleeves";
+  if (has("T-Shirt")) return "T-Shirts";
+  if (has("Workout", "Performance", "Tech")) return "Activewear";
+  return "T-Shirts";
+}
 
 const DEFAULT_RULES =
   "Runs hot. Wants year-round work button-downs that are comfortable in the 70s to 80s.\n" +
@@ -56,7 +70,8 @@ function cleanItem(id, b) {
   const name = str(b.name, 200);
   if (!name) return null;
   const status = STATUSES.includes(b.status) ? b.status : "try";
-  const cat = CATS.includes(b.cat) ? b.cat : "";
+  const cat0 = migrateCat(b.cat, b.subs);
+  const cat = CATS.includes(cat0) ? cat0 : "";
   return {
     id,
     name,
@@ -118,7 +133,17 @@ async function init(env) {
   if (!have.has("look")) await env.DB.prepare("ALTER TABLE items ADD COLUMN look TEXT").run();
 
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
-  if (seeded) return;
+  if (seeded) {
+    const done = await env.DB.prepare("SELECT value FROM settings WHERE key='cats_v2'").first();
+    if (!done) {
+      const { results } = await env.DB.prepare("SELECT id, subs FROM items WHERE cat='Shirt'").all();
+      const ups = results.map((r) =>
+        env.DB.prepare("UPDATE items SET cat=? WHERE id=?").bind(migrateCat("Shirt", JSON.parse(r.subs || "[]")), r.id));
+      for (let i = 0; i < ups.length; i += 40) await env.DB.batch(ups.slice(i, i + 40));
+      await env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES ('cats_v2','1')").run();
+    }
+    return;
+  }
   // First run: load the closet imported from Notion. INSERT OR IGNORE keeps a retry safe.
   const ins = UPSERT.replace("INSERT INTO", "INSERT OR IGNORE INTO").replace(/ ON CONFLICT.*$/, "");
   const stmts = SEED.map((raw) => env.DB.prepare(ins).bind(...itemBinds(cleanItem(raw.id, raw))));
@@ -126,6 +151,7 @@ async function init(env) {
   await env.DB.batch([
     env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES ('rules',?)").bind(DEFAULT_RULES),
     env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES ('seeded','1')"),
+    env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES ('cats_v2','1')"),
   ]);
 }
 
