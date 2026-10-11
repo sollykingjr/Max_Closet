@@ -25,7 +25,7 @@ Max has abandoned other apps and Notion because they were clunky. Keep the home 
 - `photos`: thumb (256px) and full (900px) JPEG as base64 in D1, served from `/api/photo/:id` with long caching.
 - `settings`: `rules` (Max's buying rules, used by AI), flags `seeded`, `cats_v2`.
 - Categories: T-Shirts, Button Downs, Polos, Long Sleeves, Sweaters, Activewear, Pants, Shorts, Outerwear, Blazer, Shoes, Accessories, Bathing Suit, Socks.
-- Tags (`uses`): Work, Casual, Lounge, Dressy, Workout, Travel (where), and Undershirt only, Also undershirt, Can wear open (how). Shirts are assumed worn buttoned, never open, unless tagged.
+- Tags (`uses`): Work, Casual, Lounge, Dressy, Workout, Travel (where), and "how": T-Shirts and Long Sleeves get Undershirt and/or Top layer (neither = top layer); Button Downs get Can wear open (assumed buttoned, never open, unless tagged). Other categories have no "how" tags. Old tags are mapped by `normalizeUses` in worker.js.
 - Quantity: identical copies are ONE item with `qty`; cost per wear = paid x qty / total wears.
 
 ## Tabs
