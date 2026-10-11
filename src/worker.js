@@ -395,8 +395,20 @@ async function runAI(env, b) {
   }
 
   if (task === "deal") {
-    const text = str(b.listing, 8000);
-    const image = typeof b.image === "string" && b.image.length < 8_000_000 ? b.image : "";
+    let text = str(b.listing, 8000);
+    let image = typeof b.image === "string" && b.image.length < 8_000_000 ? b.image : "";
+    const link = /https?:\/\/\S+/.exec(text);
+    if (link) {
+      const rest = text.replace(link[0], "").trim();
+      try {
+        const page = await readPage(link[0]);
+        text = (rest + "\n" + page.text).trim();
+        if (!image && page.photo) image = page.photo;
+      } catch (e) {
+        if (!rest && !image) throw e;
+        text = rest;
+      }
+    }
     if (!text && !image) throw new Error("Paste a listing or add a screenshot first.");
     const prompt =
       "I buy clothes secondhand (eBay, Poshmark) without full-price returns, so I only buy styles I have already tried on.\n\nMY RULES:\n" +

@@ -32,7 +32,7 @@
   color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:0 48px}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:0 100px}
 .wrap{max-width:720px;margin-inline:auto}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;border-bottom:1px solid var(--line)}
 h1{font-family:var(--font-display);font-weight:700;font-size:26px;line-height:1.05;margin:0;letter-spacing:-.01em}
@@ -130,83 +130,97 @@ button{font:inherit}
 .sheet-back.top2{z-index:30}
 .hlist{border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .hlist .hist:last-child{border-bottom:0}
+
+.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.scroll::-webkit-scrollbar{display:none}
+.scroll .chip{flex:none}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (min-width:560px){.grid3{grid-template-columns:repeat(4,1fr)}}
+.tile{position:relative;display:flex;flex-direction:column;gap:5px;text-align:left;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;min-width:0}
+.timg{display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--wash);border:1px solid var(--line);position:relative}
+.timg img{width:100%;height:100%;object-fit:cover;display:block}
+.timg .ttext{display:flex;align-items:center;justify-content:center;height:100%;padding:8px;text-align:center;font-size:12px;color:var(--muted);overflow:hidden}
+.tname{font-size:12.5px;line-height:1.25;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.tmeta{font-size:11px;color:var(--muted);font-family:var(--font-data);min-height:13px}
+.tile .tick{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:none;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.tile[aria-pressed="true"] .timg{outline:3px solid var(--accent);outline-offset:-3px}
+.tile[aria-pressed="true"] .tick{display:flex}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.dockrow{max-width:720px;margin-inline:auto;display:flex;gap:8px;align-items:center}
+.dockrow .btn{flex:1}
+.dockrow input[type=date]{width:auto;flex:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:40;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.otiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.otile{display:flex;flex-direction:column;gap:4px;font-size:11.5px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.morebody{display:flex;flex-direction:column;gap:12px;padding-top:12px}
+details>summary{cursor:pointer;font:600 14px var(--font-body);color:var(--accent);padding:4px 0}
+#sort-closet{width:auto;flex:none;max-width:46%}
+.bar{flex-wrap:nowrap}
+h1{font-size:22px}
+header.top{padding-block:10px 6px}
 </style>
 </head><body>
 <div class="wrap">
 <header class="top">
   <h1>Max's Closet</h1>
-  <div class="counts" id="counts"></div>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" data-tab="closet" aria-selected="true">Closet</button>
-    <button class="tab" role="tab" data-tab="log" aria-selected="false">Fit log</button>
-    <button class="tab" role="tab" data-tab="wears" aria-selected="false">Wears</button>
     <button class="tab" role="tab" data-tab="outfits" aria-selected="false">Outfits</button>
-    <button class="tab" role="tab" data-tab="check" aria-selected="false">Deal check</button>
+    <button class="tab" role="tab" data-tab="shop" aria-selected="false">Shop</button>
+    <button class="tab" role="tab" data-tab="stats" aria-selected="false">Stats</button>
   </nav>
 </header>
 <main>
 <p class="banner" id="banner" role="status" hidden></p>
 
 <section data-view="closet" id="v-closet">
-  <div class="bar"><input id="q-closet" type="search" placeholder="Search your closet" aria-label="Search closet"></div>
-  <div class="chips" id="chips-closet" role="group" aria-label="Filter by category"></div>
-  <div class="sortbar"><span class="note">Sort</span>
+  <div class="bar"><input id="q-closet" type="search" placeholder="Search" aria-label="Search closet" style="flex:1">
     <select id="sort-closet" aria-label="Sort closet">
-      <option value="cat">Category</option><option value="rating">Highest rated</option><option value="worn">Most worn</option>
+      <option value="cat">By category</option><option value="rating">Highest rated</option><option value="worn">Most worn</option>
       <option value="least">Least worn</option><option value="cpw">Lowest cost per wear</option><option value="paid">Most paid</option>
     </select></div>
+  <div class="chips scroll" id="chips-closet" role="group" aria-label="Filter by category"></div>
   <div id="list-closet"></div>
-  <button class="btn ghost fab" id="add-piece" type="button">+ Add a piece</button>
 </section>
 
-<section data-view="log" id="v-log" hidden>
+<section data-view="outfits" id="v-outfits" hidden>
+  <div class="panel">
+    <div class="chips scroll" id="chips-mode" role="group" aria-label="Outfit style"></div>
+    <div class="chips scroll" id="chips-occasion" role="group" aria-label="Occasion"></div>
+    <input id="occasion" type="text" placeholder="Or describe it: dinner Saturday, mid-60s" aria-label="Describe the occasion">
+    <div class="actions"><button class="btn" id="go-outfits" type="button">Suggest outfits</button><button class="btn ghost" id="stop-outfits" type="button" hidden>Stop</button></div>
+    <details><summary>Build around one piece</summary><div class="morebody"><select id="anchor" aria-label="Build around"></select></div></details>
+    <div id="out-outfits" aria-live="polite"></div>
+  </div>
+</section>
+
+<section data-view="shop" id="v-shop" hidden>
+  <div class="panel">
+    <h2>Check a listing</h2>
+    <label>Link, listing text or screenshot<textarea id="listing" placeholder="Paste the listing: Faherty Movement Shirt, size XL, $34, excellent condition" style="min-height:70px"></textarea></label>
+    <label id="shot-wrap">Screenshot<input id="shot" type="file" accept="image/*"></label>
+    <div class="actions"><button class="btn" id="go-check" type="button">Check this deal</button><button class="btn ghost" id="stop-check" type="button" hidden>Stop</button></div>
+    <div id="out-check" aria-live="polite"></div>
+    <details><summary>My rules</summary><div class="morebody"><textarea id="rules" aria-label="My rules" style="min-height:110px"></textarea><p class="note" style="margin:0">Saves on its own. Guides every check and outfit.</p></div></details>
+  </div>
+  <div class="ghead" style="padding-top:6px"><h2>Fit log</h2><span>styles you've tried</span></div>
   <div class="bar"><input id="q-log" type="search" placeholder="Search styles, brands, notes" aria-label="Search styles"></div>
-  <div class="chips" id="chips-log" role="group" aria-label="Filter by status"></div>
+  <div class="chips scroll" id="chips-log" role="group" aria-label="Filter by status"></div>
   <p class="note" id="log-help"></p>
   <div id="list-log"></div>
   <button class="btn ghost fab" id="add-style" type="button">+ Add a style</button>
 </section>
 
-<section data-view="wears" id="v-wears" hidden>
-  <div class="actions">
-    <button class="btn" id="log-outfit" type="button">Log an outfit</button>
-    <button class="btn ghost" id="log-bulk" type="button">Add past wears</button>
-  </div>
+<section data-view="stats" id="v-wears" hidden>
   <div id="wear-summary"></div>
-</section>
-
-<section data-view="outfits" id="v-outfits" hidden>
-  <div class="panel">
-    <h2>Outfits from what you own</h2>
-    <div class="chips" id="chips-mode" role="group" aria-label="Outfit style"></div>
-    <div class="chips" id="chips-occasion" role="group" aria-label="Occasion"></div>
-    <label>Or describe it<input id="occasion" type="text" placeholder="Dinner Saturday, mid-60s, a little dressy"></label>
-    <label>Build around<select id="anchor"></select></label>
-    <div class="actions"><button class="btn" id="go-outfits" type="button">Suggest outfits</button><button class="btn ghost" id="stop-outfits" type="button" hidden>Stop</button></div>
-    <div id="out-outfits" aria-live="polite"></div>
-  </div>
-</section>
-
-<section data-view="check" id="v-check" hidden>
-  <div class="panel">
-    <h2>Deal check</h2>
-    <p class="note" style="margin:0">Paste an eBay or Poshmark listing (title, price, size, condition) or add a screenshot. It checks the style against what you have tried on, your size, your max price and your closet.</p>
-    <label>Listing<textarea id="listing" placeholder="Faherty Movement Shirt, Atlantic Sky, size XL, $34 + $7 shipping, excellent condition"></textarea></label>
-    <div class="grid2">
-      <label id="shot-wrap">Screenshot<input id="shot" type="file" accept="image/*"></label>
-      <label>My rules<textarea id="rules" aria-describedby="rules-note" style="min-height:110px"></textarea></label>
-    </div>
-    <p class="note" id="rules-note" style="margin:0">Rules save on their own and guide every check and outfit.</p>
-    <div class="actions"><button class="btn" id="go-check" type="button">Check this deal</button><button class="btn ghost" id="stop-check" type="button" hidden>Stop</button></div>
-    <div id="out-check" aria-live="polite"></div>
-  </div>
+  <button class="btn ghost fab" id="log-bulk" type="button">Add past wears for several pieces</button>
 </section>
 </main>
 </div>
 
 <div class="sheet-back" id="sheet-back" hidden>
   <form class="sheet" id="sheet" aria-labelledby="sheet-title">
-    <h2 id="sheet-title">Edit style</h2>
+    <h2 id="sheet-title">Edit piece</h2>
     <div class="photo-row">
       <div class="pbox" id="p-box">No photo</div>
       <div class="actions" style="flex-direction:column;align-items:flex-start">
@@ -214,6 +228,10 @@ button{font:inherit}
         <button type="button" class="btn ghost" id="p-paste">Paste photo</button>
         <button type="button" class="btn danger" id="p-remove" hidden>Remove photo</button>
       </div>
+    </div>
+    <div id="fill-box">
+      <label>Fill from a link, listing text or screenshot<textarea id="fill-text" placeholder="Paste a product link or the listing text" style="min-height:60px"></textarea></label>
+      <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="fill-go">Fill the fields</button><label class="btn ghost filebtn">Screenshot<input id="fill-shot" type="file" accept="image/*" hidden></label><span class="note" id="fill-msg"></span></div>
     </div>
     <div class="panel" id="wear-box" hidden>
       <div class="stat" id="wear-stats"></div>
@@ -224,32 +242,30 @@ button{font:inherit}
       </div>
       <span class="note" id="wear-msg"></span>
     </div>
-    <div id="fill-box">
-      <label>Fill from a link, listing text or screenshot<textarea id="fill-text" placeholder="Paste a product link or the listing text" style="min-height:60px"></textarea></label>
-      <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="fill-go">Fill the fields</button><label class="btn ghost filebtn">Screenshot<input id="fill-shot" type="file" accept="image/*" hidden></label><span class="note" id="fill-msg"></span></div>
-    </div>
     <label>Name<input id="f-name" required></label>
     <div class="grid2">
       <label>Brand<input id="f-brand" list="brand-list"></label>
-      <label>Category<select id="f-cat"></select></label>
-    </div>
-    <div class="grid2">
-      <label>Status<select id="f-status"></select></label>
-      <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
+      <label>Price paid<input id="f-paid" inputmode="decimal" placeholder="$"></label>
     </div>
     <div class="field"><span class="flabel">How much I like it</span><div class="starpick" id="f-rating" role="group" aria-label="Rating"></div></div>
-    <div class="grid2">
-      <label>Price paid<input id="f-paid" inputmode="decimal" placeholder="$"></label>
-      <label>Max price (secondhand)<input id="f-max" inputmode="decimal" placeholder="$"></label>
-    </div>
-    <div class="grid2">
-      <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
-      <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
-    </div>
-    <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
-    <label>What it looks like (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
-    <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
-    <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
+    <details id="more"><summary>More details</summary><div class="morebody">
+      <div class="grid2">
+        <label>Category<select id="f-cat"></select></label>
+        <label>Status<select id="f-status"></select></label>
+      </div>
+      <div class="grid2">
+        <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
+        <label>Max price (secondhand)<input id="f-max" inputmode="decimal" placeholder="$"></label>
+      </div>
+      <div class="grid2">
+        <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
+        <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
+      </div>
+      <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
+      <label>What it looks like (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
+      <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
+      <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
+    </div></details>
     <datalist id="brand-list"></datalist>
     <p class="err" id="sheet-err" role="alert"></p>
     <div class="actions">
@@ -277,13 +293,19 @@ button{font:inherit}
   </form>
 </div>
 
+<div class="dock" id="dock">
+  <div class="dockrow" id="dock-main"><button class="btn" id="dock-log" type="button">Log what I wore</button><button class="btn ghost" id="add-piece" type="button">+ Add piece</button></div>
+  <div class="dockrow" id="dock-select" hidden><button class="btn ghost" id="sel-cancel" type="button" style="flex:none">Cancel</button><input type="date" id="sel-date" aria-label="Date worn"><button class="btn" id="sel-save" type="button">Log</button></div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
 <script>
 (function(){
 "use strict";
 var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
 var CATS=["Shirt","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
-var state={mode:"mix",fillShot:"",items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
+var state={selecting:false,sel:{},mode:"mix",fillShot:"",items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
   sheet:{id:null,rating:null,photo:null,removePhoto:false,look:""},w:{mode:"outfit",sel:{}}};
 var $=function(id){return document.getElementById(id)};
 
@@ -348,14 +370,7 @@ function saveRules(){
 }
 
 /* ---------- rendering ---------- */
-function render(){recomputeWears();renderCounts();renderLog();renderCloset();renderWears();renderAnchor();}
-function renderCounts(){
-  var c={closet:0,approved:0,try:0,passed:0};
-  state.items.forEach(function(i){if(c[i.status]!=null)c[i.status]++});
-  var tw=0;state.wears.forEach(function(w){tw+=w.count*w.itemIds.length});
-  $("counts").innerHTML=state.loaded&&state.items.length?
-    "<span><b>"+c.closet+"</b> owned</span><span><b>"+c.approved+"</b> approved</span><span><b>"+c.try+"</b> to try</span><span><b>"+c.passed+"</b> passed</span>":"";
-}
+function render(){recomputeWears();renderLog();renderCloset();renderWears();renderAnchor();}
 function chips(el,opts,cur,fn){
   el.innerHTML=opts.map(function(o){return '<button type="button" class="chip" data-v="'+esc(o[0])+'" aria-pressed="'+(o[0]===cur)+'">'+esc(o[1])+'</button>'}).join("");
   Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){fn(b.dataset.v)}});
@@ -412,11 +427,22 @@ function sortItems(items,mode){
   }[mode]||byBrandName;
   return items.sort(cmp);
 }
+function tileHtml(it){
+  var on=!!state.sel[it.id];
+  var img=it.photoV?'<img loading="lazy" alt="" src="'+photoUrl(it)+'">':'<span class="ttext">'+esc(it.name)+'</span>';
+  return '<button type="button" class="tile" data-id="'+esc(it.id)+'" aria-pressed="'+on+'"><span class="timg">'+img+'<span class="tick" aria-hidden="true">✓</span></span>'+
+    '<span class="tname">'+esc(it.photoV?label(it):(it.brand||it.name))+'</span><span class="tmeta">'+(it.rating?stars(it.rating).slice(0,it.rating):"")+(wearsOf(it)&&state.sort==="worn"?" "+wearsOf(it)+"×":"")+'</span></button>';
+}
+function bindTiles(el){Array.prototype.forEach.call(el.querySelectorAll(".tile"),function(b){b.onclick=function(){
+  var id=b.dataset.id;
+  if(state.selecting){if(state.sel[id])delete state.sel[id];else state.sel[id]=1;b.setAttribute("aria-pressed",String(!!state.sel[id]));updateDock()}
+  else openSheet(id);
+}})}
 function renderCloset(){
   var closet=state.items.filter(function(i){return i.status==="closet"});
   var cats=["All"].concat(CATS.filter(function(c){return closet.some(function(i){return i.cat===c})}));
   if(closet.some(function(i){return !i.cat}))cats.push("Other");
-  chips($("chips-closet"),cats.map(function(c){return [c,c==="All"?"All "+closet.length:c+" "+closet.filter(function(i){return c==="Other"?!i.cat:i.cat===c}).length]}),state.closetCat,function(v){state.closetCat=v;renderCloset()});
+  chips($("chips-closet"),cats.map(function(c){return [c,c]}),state.closetCat,function(v){state.closetCat=v;renderCloset()});
   var q=$("q-closet").value.trim();
   var items=closet.filter(function(i){
     var c=state.closetCat;
@@ -424,18 +450,37 @@ function renderCloset(){
   });
   var el=$("list-closet");
   if(!state.loaded){el.innerHTML=emptyBox("Loading your closet","One moment.");return}
-  if(!closet.length){el.innerHTML=state.dbMsg?emptyBox("No data to show",state.dbMsg):emptyBox("Your closet is empty","Add a piece to start building outfits.");return}
+  if(!closet.length){el.innerHTML=state.dbMsg?emptyBox("No data to show",state.dbMsg):emptyBox("Your closet is empty","Tap + Add piece to start.");return}
   if(!items.length){el.innerHTML=emptyBox("Nothing here","No pieces match.");return}
   sortItems(items,state.sort);
-  if(state.sort!=="cat"){
-    el.innerHTML='<div class="list">'+items.map(function(i){return rowHtml(i,"closet")}).join("")+'</div>';bindRows(el);return;
+  if(state.sort!=="cat"||state.closetCat!=="All"){
+    el.innerHTML='<div class="grid3">'+items.map(tileHtml).join("")+'</div>';bindTiles(el);return;
   }
   var groups={},order=[];
   items.forEach(function(i){var k=i.cat||"Other";if(!groups[k]){groups[k]=[];order.push(k)}groups[k].push(i)});
   el.innerHTML=order.map(function(k){
-    return '<div class="group"><div class="ghead"><h2>'+esc(k)+'</h2><span>'+groups[k].length+'</span></div><div class="list">'+groups[k].map(function(i){return rowHtml(i,"closet")}).join("")+'</div></div>';
+    return '<div class="group"><div class="ghead"><h2>'+esc(k)+'</h2><span>'+groups[k].length+'</span></div><div class="grid3" style="padding-top:10px">'+groups[k].map(tileHtml).join("")+'</div></div>';
   }).join("");
-  bindRows(el);
+  bindTiles(el);
+}
+
+/* ---------- log what I wore (select mode on the closet grid) ---------- */
+function toast(msg){var el=$("toast");el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},2600)}
+function updateDock(){
+  $("dock").hidden=state.view!=="closet";
+  $("dock-main").hidden=state.selecting;$("dock-select").hidden=!state.selecting;
+  var n=Object.keys(state.sel).length;
+  $("sel-save").textContent=n?"Log "+n+(n===1?" piece":" pieces"):"Pick what you wore";
+  $("sel-save").disabled=!n;
+}
+function startSelect(){state.selecting=true;state.sel={};$("sel-date").value=today();renderCloset();updateDock()}
+function endSelect(){state.selecting=false;state.sel={};renderCloset();updateDock()}
+function saveSelect(){
+  var ids=Object.keys(state.sel);if(!ids.length)return;
+  $("sel-save").disabled=true;
+  addWear({itemIds:ids,kind:"outfit",date:$("sel-date").value||today(),count:1}).then(function(){
+    toast("Logged "+ids.length+(ids.length===1?" piece":" pieces")+" for "+niceDate($("sel-date").value||today()));endSelect();
+  }).catch(function(e){toast("Could not save: "+((e&&e.message)||"error"));$("sel-save").disabled=false});
 }
 
 function renderAnchor(){
@@ -456,8 +501,7 @@ function renderWears(){
   var worn=owned.filter(function(i){return wearsOf(i)>0}),never=owned.filter(function(i){return wearsOf(i)===0});
   var total=0;state.wears.forEach(function(w){total+=w.count*w.itemIds.length});
   var spent=0,spentWorn=0;owned.forEach(function(i){if(i.paid>0){spent+=i.paid;if(wearsOf(i)>0)spentWorn+=i.paid}});
-  var html='<div class="panel"><div class="stat"><span><b>'+total+'</b> piece-wears</span><span><b>'+worn.length+'</b> pieces worn</span><span><b>'+never.length+'</b> never worn</span></div>'+
-    (spent?'<div class="note">You paid '+esc(money2(spent))+' for owned pieces ('+esc(money2(spent-spentWorn))+' of it on pieces with no wears logged yet).</div>':'')+'</div>';
+  var html='<p class="note" style="margin:0">'+worn.length+' pieces worn · '+never.length+' never worn'+(spent?' · '+esc(money2(spent))+' paid for what you own':'')+'</p>';
   var ranked=owned.filter(function(i){return cpwOf(i)!=null}).sort(function(a,b){return cpwOf(a)-cpwOf(b)});
   if(ranked.length){
     var shown=showAllCpw?ranked:ranked.slice(0,10);
@@ -568,10 +612,10 @@ function openSheet(id,preset){
   $("f-look").value=d.look||"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
-  state.fillShot="";
+  state.fillShot="";$("fill-box").hidden=!!it;$("more").open=false;
   $("wear-box").hidden=!it;
-  renderRatingPick();renderPhotoBox();refreshSheetStats();
-  $("sheet-back").hidden=false;
+  renderRatingPick();renderPhotoBox();
+  $("sheet-back").hidden=false;refreshSheetStats();
   if(!it)setTimeout(function(){$("f-name").focus()},30);
 }
 function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
@@ -664,7 +708,7 @@ function suggestOutfits(){
     if(!Array.isArray(list)||!list.length)throw new Error("No outfits came back. Try again.");
     $("out-outfits").innerHTML='<div class="cards">'+list.slice(0,3).map(function(o,idx){
       var names=(o.pieceIds||[]).map(itemName).filter(Boolean);
-      return '<div class="card">'+(o.label?'<span class="pill closet" style="align-self:flex-start">'+esc(o.label)+'</span>':'')+'<h3>'+esc(o.title||"Outfit")+'</h3><ul>'+names.map(function(n){return '<li>'+esc(n)+'</li>'}).join("")+'</ul>'+(o.why?'<span class="note">'+esc(o.why)+'</span>':'')+
+      return '<div class="card">'+(o.label?'<span class="pill closet" style="align-self:flex-start">'+esc(o.label)+'</span>':'')+'<h3>'+esc(o.title||"Outfit")+'</h3><div class="otiles">'+(o.pieceIds||[]).map(itemById).filter(Boolean).map(function(it){return '<span class="otile"><span class="timg">'+(it.photoV?'<img alt="" src="'+photoUrl(it)+'">':'<span class="ttext">'+esc(label(it))+'</span>')+'</span>'+(it.photoV?esc(label(it)):'')+'</span>'}).join("")+'</div>'+(o.why?'<span class="note">'+esc(o.why)+'</span>':'')+
         '<div class="actions"><button type="button" class="btn ghost wore" data-i="'+idx+'">I wore this today</button></div></div>';
     }).join("")+'</div>';
     Array.prototype.forEach.call($("out-outfits").querySelectorAll(".wore"),function(b){b.onclick=function(){
@@ -727,7 +771,7 @@ function setView(v){
   state.view=v;
   Array.prototype.forEach.call(document.querySelectorAll("[data-view]"),function(s){s.hidden=s.dataset.view!==v});
   Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.setAttribute("aria-selected",String(t.dataset.tab===v))});
-  window.scrollTo(0,0);
+  window.scrollTo(0,0);updateDock();
 }
 Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.onclick=function(){setView(t.dataset.tab)}});
 $("q-log").oninput=renderLog;$("q-closet").oninput=renderCloset;
@@ -775,11 +819,12 @@ $("past-add").onclick=function(){
   var b=this;b.disabled=true;
   addWear({itemIds:[state.editing],kind:"bulk",date:today(),count:n,note:"Past wears estimate"}).then(function(){$("past-n").value="";$("wear-msg").textContent="Added "+n+" past wears."}).catch(function(e){$("wear-msg").textContent=errCopy(e)}).then(function(){b.disabled=false});
 };
-$("log-outfit").onclick=function(){openPicker("outfit")};
+$("dock-log").onclick=startSelect;$("sel-cancel").onclick=endSelect;$("sel-save").onclick=saveSelect;
 $("log-bulk").onclick=function(){openPicker("bulk")};
 $("w-q").oninput=renderPicker;
 $("sheet2").onsubmit=savePicker;$("w-cancel").onclick=function(){$("sheet2-back").hidden=true};
 
+updateDock();
 render();
 start();
 })();
