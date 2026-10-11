@@ -2,7 +2,7 @@
 // Static UI lives in /public (served by the assets binding). This file handles /api/*.
 import SEED from "./seed.json";
 
-const USES = ["Work", "Casual", "Lounge", "Dressy", "Workout", "Travel", "Layer only"];
+const USES = ["Work", "Casual", "Lounge", "Dressy", "Workout", "Travel", "Undershirt only", "Also undershirt", "Can wear open"];
 const STATUSES = ["closet", "approved", "try", "passed", "retired"];
 const CATS = ["T-Shirts", "Button Downs", "Polos", "Long Sleeves", "Sweaters", "Activewear", "Pants", "Shorts", "Outerwear", "Blazer", "Shoes", "Accessories", "Bathing Suit", "Socks"];
 
@@ -92,7 +92,7 @@ function cleanItem(id, b) {
     rating: ratingOrNull(b.rating),
     look: str(b.look, 600),
     qty: Math.min(99, Math.max(1, parseInt(b.qty, 10) || 1)),
-    uses: (Array.isArray(b.uses) ? b.uses : []).filter((x) => USES.includes(x)),
+    uses: (Array.isArray(b.uses) ? b.uses : []).map((x) => (x === "Layer only" ? "Undershirt only" : x)).filter((x) => USES.includes(x)),
   };
 }
 const ratingOrNull = (v) => {
@@ -399,7 +399,7 @@ async function runAI(env, b) {
       "\n\nCLOSET (id | name | category | type | colors | fabric | look | where I wear it | my rating | times worn | last worn):\n" + closet +
       "\n\nFAVORITES (highest rated, then most worn): " + favs.join(", ") +
       "\nBEEN A WHILE (longest since last worn): " + stale.join(", ") +
-      "\n\nUse the look descriptions so colors and patterns work together. \"Where I wear it\" tells you which settings a piece suits (Work, Casual, Lounge, Dressy, Workout, Travel); \"any\" means unspecified. Only use pieces whose setting fits the request, and never use a \"Layer only\" piece as a visible top (it is an undershirt). Within each outfit only combine pieces that suit the request.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
+      "\n\nUse the look descriptions so colors and patterns work together. \"Where I wear it\" tells you which settings a piece suits (Work, Casual, Lounge, Dressy, Workout, Travel); \"any\" means unspecified, and only pieces whose setting fits the request should be used. How a piece is worn: by default every shirt is worn buttoned or as-is and never open. \"Can wear open\" pieces may be worn open as an overshirt over a tee or undershirt (then add that tee to the outfit and say it is worn open). \"Undershirt only\" pieces are never a visible top. \"Also undershirt\" pieces can be a visible top or an undershirt. Within each outfit only combine pieces that suit the request.\n\nREQUEST: " + occ + (anchor ? "\nBuild every outfit around item id " + anchor + "." : "") +
       "\n\n" + plan +
       '\nReturn only JSON: {"outfits":[{"label":string,"title":string,"pieceIds":[ids],"why":string}]}. ' +
       "Each outfit has a top, bottom and shoes, plus outerwear or accessories when the request needs them. " +
@@ -455,7 +455,7 @@ async function runAI(env, b) {
       '"matchedStyle":string|null,"outfitCount":number,"outfits":[{"title":string,"pieceIds":[closet ids]}],"suggestName":string,"brand":string,"category":string}. ' +
       '"buy" = matches a tried style, my size, and the price is at or under my max or reasonable for the rules. "try-first" = not tried yet. ' +
       '"skip" = a style that did not work, wrong size, fabric against my rules, or price too high. "size" says which size to buy or that it is wrong. ' +
-      '"price" is one sentence on the price. outfitCount is how many distinct outfits this piece makes with my closet (respect the \"where I wear it\" tags and never count \"Layer only\" pieces as tops); list at most 3. ' +
+      '"price" is one sentence on the price. outfitCount is how many distinct outfits this piece makes with my closet (respect the \"where I wear it\" tags; never count \"Undershirt only\" pieces as tops, and only treat a shirt as worn open if it is tagged \"Can wear open\"); list at most 3. ' +
       "category must be one of: " + CATS.join(", ") + ". Keep reasons to 2 to 4 short sentences.";
     const r = await callLLM(env, { system: SYSTEM, prompt, image });
     const ids = new Set(items.map((i) => i.id));

@@ -140,8 +140,9 @@ button{font:inherit}
 .timg{display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--wash);border:1px solid var(--line);position:relative}
 .timg img{width:100%;height:100%;object-fit:cover;display:block}
 .timg .ttext{display:flex;align-items:center;justify-content:center;height:100%;padding:8px;text-align:center;font-size:12px;color:var(--muted);overflow:hidden}
-.tname{font-size:12.5px;line-height:1.25;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.tmeta{font-size:11px;color:var(--muted);font-family:var(--font-data);min-height:13px}
+.tname{font-size:12.5px;line-height:1.25;font-weight:500;overflow-wrap:anywhere}
+.tmeta{font-size:11.5px;color:var(--muted);line-height:1.2;overflow-wrap:anywhere}
+.tmeta .stars{font-size:11px;letter-spacing:0}
 .tile .tick{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:none;align-items:center;justify-content:center;font-size:14px;font-weight:700}
 .tile[aria-pressed="true"] .timg{outline:3px solid var(--accent);outline-offset:-3px}
 .tile[aria-pressed="true"] .tick{display:flex}
@@ -272,6 +273,7 @@ header.top{padding-block:10px 6px}
     </div>
     <label>How many do I own<input id="f-qty" inputmode="numeric" placeholder="1"></label>
     <div class="field"><span class="flabel">Where I wear it</span><div class="chips" id="f-uses" role="group" aria-label="Where I wear it"></div></div>
+    <div class="field"><span class="flabel">How I wear it</span><div class="chips" id="f-uses2" role="group" aria-label="How I wear it"></div><span class="note">Shirts are assumed buttoned or as-is, never open, unless tagged.</span></div>
     <label>Description (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
     <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
     <div class="grid2">
@@ -321,7 +323,8 @@ header.top{padding-block:10px 6px}
 (function(){
 "use strict";
 var STATUS={closet:"Closet",approved:"Approved",try:"To try",passed:"Passed",retired:"Retired"};
-var USES=["Work","Casual","Lounge","Dressy","Workout","Travel","Layer only"];
+var USES_WHERE=["Work","Casual","Lounge","Dressy","Workout","Travel"];
+var USES_HOW=["Undershirt only","Also undershirt","Can wear open"];
 var CATS=["T-Shirts","Button Downs","Polos","Long Sleeves","Sweaters","Activewear","Pants","Shorts","Outerwear","Blazer","Shoes","Accessories","Bathing Suit","Socks"];
 function catIdx(c){var i=CATS.indexOf(c);return i<0?99:i}
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
@@ -454,9 +457,12 @@ function sortItems(items,mode){
 }
 function tileHtml(it){
   var on=!!state.sel[it.id];
-  var img=it.photoV?'<img loading="lazy" alt="" src="'+photoUrl(it)+'">':'<span class="ttext">'+esc(it.name)+'</span>';
+  var img=it.photoV?'<img loading="lazy" alt="" src="'+photoUrl(it)+'">':'<span class="ttext">No photo</span>';
+  var meta=[];if(it.brand)meta.push(esc(it.brand));
+  if(it.rating)meta.push('<span class="stars">'+stars(it.rating).slice(0,it.rating)+'</span>');
+  if(wearsOf(it)&&state.sort==="worn")meta.push(wearsOf(it)+"×");
   return '<button type="button" class="tile" data-id="'+esc(it.id)+'" aria-pressed="'+on+'"><span class="timg">'+img+'<span class="tick" aria-hidden="true">✓</span>'+(qtyOf(it)>1?'<span class="qty">×'+qtyOf(it)+'</span>':'')+'</span>'+
-    '<span class="tname">'+esc(it.photoV?label(it):(it.brand||it.name))+'</span><span class="tmeta">'+(it.rating?stars(it.rating).slice(0,it.rating):"")+(wearsOf(it)&&state.sort==="worn"?" "+wearsOf(it)+"×":"")+'</span></button>';
+    '<span class="tmeta">'+meta.join(" · ")+'</span><span class="tname">'+esc(it.name)+'</span></button>';
 }
 function bindTiles(el){Array.prototype.forEach.call(el.querySelectorAll(".tile"),function(b){b.onclick=function(){
   var id=b.dataset.id;
@@ -600,11 +606,13 @@ function savePicker(ev){
 /* ---------- item sheet (add / edit / detail) ---------- */
 function fillSelect(sel,opts){sel.innerHTML=opts.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'}).join("")}
 function renderUsesPick(){
-  var el=$("f-uses");
-  el.innerHTML=USES.map(function(u){return '<button type="button" class="chip" data-u="'+esc(u)+'" aria-pressed="'+(state.sheet.uses.indexOf(u)>-1)+'">'+esc(u)+'</button>'}).join("");
-  Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){
-    var i=state.sheet.uses.indexOf(b.dataset.u);if(i>-1)state.sheet.uses.splice(i,1);else state.sheet.uses.push(b.dataset.u);renderUsesPick();
-  }});
+  [["f-uses",USES_WHERE],["f-uses2",USES_HOW]].forEach(function(g){
+    var el=$(g[0]);
+    el.innerHTML=g[1].map(function(u){return '<button type="button" class="chip" data-u="'+esc(u)+'" aria-pressed="'+(state.sheet.uses.indexOf(u)>-1)+'">'+esc(u)+'</button>'}).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){
+      var i=state.sheet.uses.indexOf(b.dataset.u);if(i>-1)state.sheet.uses.splice(i,1);else state.sheet.uses.push(b.dataset.u);renderUsesPick();
+    }});
+  });
 }
 function renderRatingPick(){
   var el=$("f-rating");
@@ -632,7 +640,7 @@ function openSheet(id,preset){
   if(id&&!it)return;
   state.editing=it?it.id:null;
   var d=it||preset||{status:"try"};
-  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),photo:null,removePhoto:false};
+  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).map(function(u){return u==="Layer only"?"Undershirt only":u}).slice(),photo:null,removePhoto:false};
   $("sheet-title").textContent=it?(it.status==="closet"?"Edit piece":"Edit style"):(d.status==="closet"?"Add a piece":"Add a style");
   fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
   fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
