@@ -196,7 +196,7 @@ function extractJson(text) {
   throw new Error("The AI reply could not be read. Try again.");
 }
 
-async function callLLM(env, { system, prompt, image }) {
+async function callLLM(env, { system, prompt, image, lowDetail = false }) {
   const provider = (env.PROVIDER || "openai").toLowerCase();
   const img = image ? parseDataUrl(image) : null;
   let res, body, text;
@@ -204,7 +204,7 @@ async function callLLM(env, { system, prompt, image }) {
   if (provider === "openai") {
     if (!env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not set on the Worker.");
     const content = [{ type: "text", text: prompt }];
-    if (img) content.push({ type: "image_url", image_url: { url: image } });
+    if (img) content.push({ type: "image_url", image_url: lowDetail ? { url: image, detail: "low" } : { url: image } });
     res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + env.OPENAI_API_KEY },
@@ -414,7 +414,7 @@ async function runAI(env, b) {
     const prompt =
       "This is a photo of a clothing item: " + label(it) + ". Describe it for a stylist in at most 30 words: main colors, pattern, fabric look and weight, silhouette, and how dressy it is. " +
       'Return only JSON: {"look":string}.';
-    const r = await callLLM(env, { system: SYSTEM, prompt, image: "data:image/jpeg;base64," + ph.full });
+    const r = await callLLM(env, { system: SYSTEM, prompt, image: "data:image/jpeg;base64," + ph.full, lowDetail: true });
     const look = str(r.look, 600);
     await env.DB.prepare("UPDATE items SET look=?, updated_at=? WHERE id=?").bind(look, Date.now(), id).run();
     return { look };
