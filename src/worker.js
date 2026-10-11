@@ -432,7 +432,9 @@ async function runAI(env, b) {
       "This is a photo of a clothing item: " + label(it) + ". Describe it for a stylist in at most 30 words: main colors, pattern, fabric look and weight, silhouette, and how dressy it is. " +
       'Return only JSON: {"look":string}.';
     const r = await callLLM(env, { system: SYSTEM, prompt, image: "data:image/jpeg;base64," + ph.full, lowDetail: true });
-    const look = str(r.look, 600);
+    // Keep the owner's exact-shade note ("Color: Heather Black.") when the description is regenerated.
+    const keep = ((it.look || "").match(/Color: [^.\n]+\./) || [""])[0];
+    const look = keep ? str(r.look, 600 - keep.length - 1) + " " + keep : str(r.look, 600);
     await env.DB.prepare("UPDATE items SET look=?, updated_at=? WHERE id=?").bind(look, Date.now(), id).run();
     return { look };
   }
