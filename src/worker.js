@@ -382,9 +382,19 @@ async function runAI(env, b) {
       '"look" is at most 30 words for a stylist: main colors, pattern, fabric look and weight, silhouette, how dressy. "price" is the listed price.\n\n' + text.slice(0, 7000);
     const r = await callLLM(env, { system: SYSTEM, prompt, image });
     const colors = strList(r.colors);
-    const colorName = str(r.colorName, 80);
+    let colorName = str(r.colorName, 80);
+    if (!colorName && url) {
+      // Many shops put the colorway in the link (?color=deep-navy); use it when the model gave none.
+      try {
+        const q = new URL(url).searchParams;
+        const c = q.get("color") || q.get("colour") || "";
+        colorName = c.replace(/[-_+]+/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()).trim().slice(0, 80);
+      } catch (_) {}
+    }
     let name = str(r.name, 200);
     let look = str(r.look, 600);
+    // Drop a trailing size the page title carries ("..., Size L").
+    name = name.replace(/\s*(?:[,\-–]|\()?\s*\bsize\b\s*[:\-]?\s*[A-Za-z0-9.\/]{1,6}\)?\s*$/i, "").trim() || name;
     if (colorName) {
       // Drop a trailing color the model left in the name ("Tee - Heather Black", "Boot in Mocha").
       const esc = colorName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
