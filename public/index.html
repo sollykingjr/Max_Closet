@@ -285,7 +285,11 @@ header.top{padding-block:10px 6px}
       <label>Colors<input id="f-colors" placeholder="Navy, White"></label>
       <label>Type<input id="f-subs" placeholder="Oxford, Button Down"></label>
     </div>
-    <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
+    <div class="grid2">
+      <label>Fabric<input id="f-fabric" placeholder="100% cotton oxford"></label>
+      <label>Bought from<input id="f-bought" list="bought-list" placeholder="Poshmark, NWT"></label>
+    </div>
+    <datalist id="bought-list"></datalist>
     <label>Fit notes<textarea id="f-note" placeholder="Shoulders tight in XL, XXL too big"></textarea></label>
     <datalist id="brand-list"></datalist>
     <p class="err" id="sheet-err" role="alert"></p>
@@ -341,7 +345,7 @@ function num(v){var n=parseFloat(String(v).replace(/[^0-9.]/g,""));return isFini
 function listOf(s){return String(s||"").split(",").map(function(x){return x.trim()}).filter(Boolean)}
 function byBrandName(a,b){return (a.brand||"~").localeCompare(b.brand||"~")||a.name.localeCompare(b.name)}
 function known(it){return it.status==="closet"||it.status==="approved"}
-function matches(it,q){if(!q)return true;q=q.toLowerCase();return [it.name,it.brand,it.note,it.fabric,it.cat,it.look,(it.uses||[]).join(" "),(it.subs||[]).join(" "),(it.colors||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>-1}
+function matches(it,q){if(!q)return true;q=q.toLowerCase();return [it.name,it.brand,it.note,it.fabric,it.bought,it.cat,it.look,(it.uses||[]).join(" "),(it.subs||[]).join(" "),(it.colors||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>-1}
 function pad(n){return n<10?"0"+n:""+n}
 function today(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -663,10 +667,12 @@ function openSheet(id,preset){
   fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
   fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
   var brands={};state.items.forEach(function(i){if(i.brand)brands[i.brand]=1});
+  var buys={"eBay":1,"Poshmark":1,"eBay (NWT)":1,"eBay (used)":1,"Poshmark (NWT)":1,"Poshmark (used)":1};state.items.forEach(function(i){if(i.bought)buys[i.bought]=1});
+  $("bought-list").innerHTML=Object.keys(buys).map(function(b){return '<option value="'+esc(b)+'">'}).join("");
   $("brand-list").innerHTML=Object.keys(brands).sort().map(function(b){return '<option value="'+esc(b)+'">'}).join("");
   $("f-name").value=d.name||"";$("f-brand").value=d.brand||"";$("f-cat").value=d.cat||"";$("f-status").value=d.status||"try";
   $("f-size").value=d.size||"";$("f-max").value=d.maxPrice!=null?d.maxPrice:"";$("f-paid").value=d.paid!=null?d.paid:"";
-  $("f-colors").value=(d.colors||[]).join(", ");$("f-subs").value=(d.subs||[]).join(", ");$("f-fabric").value=d.fabric||"";$("f-note").value=d.note||"";
+  $("f-colors").value=(d.colors||[]).join(", ");$("f-subs").value=(d.subs||[]).join(", ");$("f-fabric").value=d.fabric||"";$("f-bought").value=d.bought||"";$("f-note").value=d.note||"";
   $("f-look").value=d.look||"";$("f-qty").value=d.qty>1?d.qty:"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
@@ -679,7 +685,7 @@ function openSheet(id,preset){
 function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
   var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
-    size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),note:$("f-note").value.trim(),
+    size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),bought:$("f-bought").value.trim(),note:$("f-note").value.trim(),
     look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1,seasons:state.sheet.seasons.slice(),uses:state.sheet.uses.filter(function(u){return USES_WHERE.indexOf(u)>-1||howOptions().indexOf(u)>-1})};
   var mx=num($("f-max").value),pd=num($("f-paid").value);
   if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
