@@ -661,7 +661,7 @@ function openSheet(id,preset){
   $("wear-box").hidden=!it;
   renderRatingPick();renderUsesPick();renderPhotoBox();
   $("sheet-back").hidden=false;refreshSheetStats();
-  if(!it)setTimeout(function(){$("f-name").focus()},30);
+  if(!it)setTimeout(function(){$(d.name?"f-name":"fill-text").focus()},30);
 }
 function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
