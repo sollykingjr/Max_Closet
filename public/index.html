@@ -274,6 +274,7 @@ header.top{padding-block:10px 6px}
     <label>How many do I own<input id="f-qty" inputmode="numeric" placeholder="1"></label>
     <div class="field"><span class="flabel">Where I wear it</span><div class="chips" id="f-uses" role="group" aria-label="Where I wear it"></div></div>
     <div class="field" id="how-field"><span class="flabel">How I wear it</span><div class="chips" id="f-uses2" role="group" aria-label="How I wear it"></div><span class="note" id="how-note"></span></div>
+    <div class="field"><span class="flabel">Best seasons</span><div class="chips" id="f-seasons" role="group" aria-label="Best seasons"></div></div>
     <label>Description (used for outfits)<textarea id="f-look" placeholder="Filled in from the photo, or write your own" style="min-height:60px"></textarea></label>
     <div class="actions" style="margin-top:-6px"><button type="button" class="btn ghost" id="p-describe" hidden>Describe from photo</button><span class="note" id="describe-msg"></span></div>
     <div class="grid2">
@@ -607,6 +608,18 @@ function savePicker(ev){
 
 /* ---------- item sheet (add / edit / detail) ---------- */
 function fillSelect(sel,opts){sel.innerHTML=opts.map(function(o){return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'}).join("")}
+var SEASONS=["Spring","Summer","Fall","Winter"];
+function renderSeasonPick(){
+  var cur=state.sheet.seasons,all=SEASONS.every(function(s){return cur.indexOf(s)>-1});
+  var el=$("f-seasons");
+  el.innerHTML=SEASONS.map(function(s){return '<button type="button" class="chip" data-s="'+s+'" aria-pressed="'+(cur.indexOf(s)>-1)+'">'+s+'</button>'}).join("")+
+    '<button type="button" class="chip" data-all="1" aria-pressed="'+all+'">All seasons</button>';
+  Array.prototype.forEach.call(el.querySelectorAll(".chip"),function(b){b.onclick=function(){
+    if(b.dataset.all)state.sheet.seasons=all?[]:SEASONS.slice();
+    else state.sheet.seasons=SEASONS.filter(function(s){return s===b.dataset.s?cur.indexOf(s)<0:cur.indexOf(s)>-1});
+    renderSeasonPick();
+  }});
+}
 function renderUsesPick(){
   var how=howOptions();
   $("how-field").hidden=!how.length;
@@ -645,7 +658,7 @@ function openSheet(id,preset){
   if(id&&!it)return;
   state.editing=it?it.id:null;
   var d=it||preset||{status:"try"};
-  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),photo:null,removePhoto:false};
+  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),seasons:(d.seasons||[]).slice(),photo:null,removePhoto:false};
   $("sheet-title").textContent=it?(it.status==="closet"?"Edit piece":"Edit style"):(d.status==="closet"?"Add a piece":"Add a style");
   fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
   fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
@@ -659,7 +672,7 @@ function openSheet(id,preset){
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
   state.fillShot="";$("fill-box").hidden=!!it;
   $("wear-box").hidden=!it;
-  renderRatingPick();renderUsesPick();renderPhotoBox();
+  renderRatingPick();renderUsesPick();renderSeasonPick();renderPhotoBox();
   $("sheet-back").hidden=false;refreshSheetStats();
   if(!it)setTimeout(function(){$(d.name?"f-name":"fill-text").focus()},30);
 }
@@ -667,7 +680,7 @@ function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
   var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
     size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),note:$("f-note").value.trim(),
-    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1,uses:state.sheet.uses.filter(function(u){return USES_WHERE.indexOf(u)>-1||howOptions().indexOf(u)>-1})};
+    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1,seasons:state.sheet.seasons.slice(),uses:state.sheet.uses.filter(function(u){return USES_WHERE.indexOf(u)>-1||howOptions().indexOf(u)>-1})};
   var mx=num($("f-max").value),pd=num($("f-paid").value);
   if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
   var cur=state.editing&&itemById(state.editing);if(cur&&cur.url)d.url=cur.url;
