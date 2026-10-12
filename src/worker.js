@@ -375,14 +375,32 @@ async function runAI(env, b) {
     if (!text && !image) throw new Error("Paste a link, listing text or a screenshot first.");
     const prompt =
       'Extract clothing details from this listing or product page. Return only JSON: {"name":string,"brand":string,"category":one of ' +
-      CATS.join("/") + ',"colors":[string],"subs":[string],"fabric":string,"size":string,"price":number|null,' +
-      '"look":string}. Use empty strings when unknown. "name" excludes the brand. "subs" are style types like Oxford, Polo, Chino. ' +
+      CATS.join("/") + ',"colors":[string],"colorName":string,"subs":[string],"fabric":string,"size":string,"price":number|null,' +
+      '"look":string}. Use empty strings when unknown. "name" excludes the brand and excludes the color or colorway. ' +
+      '"colors" are plain base colors (Black, Navy, Grey, Blue...). "colorName" is the exact color name as listed, e.g. "Heather Black". ' +
+      '"subs" are style types like Oxford, Polo, Chino. ' +
       '"look" is at most 30 words for a stylist: main colors, pattern, fabric look and weight, silhouette, how dressy. "price" is the listed price.\n\n' + text.slice(0, 7000);
     const r = await callLLM(env, { system: SYSTEM, prompt, image });
+    const colors = strList(r.colors);
+    const colorName = str(r.colorName, 80);
+    let name = str(r.name, 200);
+    let look = str(r.look, 600);
+    if (colorName) {
+      // Drop a trailing color the model left in the name ("Tee - Heather Black", "Boot in Mocha").
+      const esc = colorName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      name = name.replace(new RegExp("\\s*(?:-|–|,|\\bin\\b|\\()\\s*" + esc + "\\)?\\s*$", "i"), "").trim() || name;
+      // Keep the exact shade in the description when it says more than the simple color tags do.
+      const tagWords = new Set(colors.flatMap((c) => c.toLowerCase().split(/\W+/)));
+      const words = colorName.toLowerCase().split(/\W+/).filter(Boolean);
+      if (words.some((w) => !tagWords.has(w)) && !/Color: /.test(look)) {
+        const note = "Color: " + colorName + ".";
+        look = (str(look, 600 - note.length - 1) + " " + note).trim();
+      }
+    }
     return {
-      name: str(r.name, 200), brand: str(r.brand, 100), category: CATS.includes(r.category) ? r.category : "",
-      colors: strList(r.colors), subs: strList(r.subs), fabric: str(r.fabric, 200), size: str(r.size, 40),
-      price: numOrNull(r.price), look: str(r.look, 600), photo,
+      name, brand: str(r.brand, 100), category: CATS.includes(r.category) ? r.category : "",
+      colors, subs: strList(r.subs), fabric: str(r.fabric, 200), size: str(r.size, 40),
+      price: numOrNull(r.price), look, photo,
     };
   }
 
