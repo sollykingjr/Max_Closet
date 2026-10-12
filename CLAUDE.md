@@ -19,14 +19,15 @@ Max has abandoned other apps and Notion because they were clunky. Keep the home 
 - `public/index.html`: the entire UI (HTML, CSS, JS in one file).
 
 ## Data model
-- `items`: id, name, brand, cat, subs[] (type tags), colors[], size, status, paid (per piece), max_price, fabric, note, url, rating (1-5), look (AI/own description), qty, uses[] (tags), updated_at.
+- `items`: id, name, brand, cat, subs[] (type tags), colors[], size, status, paid (per piece), max_price, fabric, note, url, rating (1-5), look (AI/own description; may hold a "Color: <exact shade>." line that regenerating from a photo keeps), bought (where bought, e.g. "Poshmark, NWT"), qty (owned count), uses[] (tags), seasons[] (Spring/Summer/Fall/Winter), purchases[] (history lines), updated_at.
 - Status: `closet` (owned; the only status shown in Closet and used for outfits), `approved` (tried, fits, safe to rebuy; not owned, e.g. socks), `try`, `passed`, `retired`.
 - `wears` + `wear_items`: one entry per logged wear (date, count, kind `outfit` or `bulk`, items). Bulk = past-wear estimates; they count toward cost per wear but not "last worn".
 - `photos`: thumb (256px) and full (900px) JPEG as base64 in D1, served from `/api/photo/:id` with long caching.
 - `settings`: `rules` (Max's buying rules, used by AI), flags `seeded`, `cats_v2`.
 - Categories: T-Shirts, Button Downs, Polos, Long Sleeves, Sweaters, Activewear, Pants, Shorts, Outerwear, Blazer, Shoes, Accessories, Bathing Suit, Socks.
 - Tags (`uses`): Work, Casual, Lounge, Dressy, Workout, Travel (where), and "how": T-Shirts and Long Sleeves get Undershirt and/or Top layer (neither = top layer); Button Downs get Can wear open (assumed buttoned, never open, unless tagged). Other categories have no "how" tags. Old tags are mapped by `normalizeUses` in worker.js.
-- Quantity: identical copies are ONE item with `qty`; cost per wear = paid x qty / total wears.
+- Quantity and prices: identical copies are ONE item. `purchases` is a list of lines `{id, n, price, date, retired}` (n copies bought at `price` on `date`; `retired` of them retired, but never all copies: retire the whole piece with Status instead). `qty` = owned copies (sum of n - retired) and `paid` = average price per copy, both derived by the server from `purchases`. Cost per wear = total spent on all lines (retired copies included) / total wears. Pieces saved before purchase history have no lines and show one virtual line built from `qty` and `paid`. Pieces with status try or passed drop lines that have no price.
+- Fill-from-link keeps the color out of the name, drops a trailing size from the name, and adds "Color: <exact shade>." to the description when the listed shade says more than the simple color tags.
 
 ## Tabs
 Closet (photo grid, category chips, sort, "Log what I wore" select mode, add piece) / Outfits (modes Mix it up, Favorites, Been a while; occasion; optional anchor piece; "I wore this today") / Shop (deal check for link, text or screenshot; rules; Fit log) / Stats (cost per wear, never worn, history, bulk past wears).
