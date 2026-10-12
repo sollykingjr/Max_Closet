@@ -195,7 +195,7 @@ header.top{padding-block:10px 6px}
 <section data-view="closet" id="v-closet">
   <div class="bar"><input id="q-closet" type="search" placeholder="Search" aria-label="Search closet" style="flex:1">
     <select id="sort-closet" aria-label="Sort closet">
-      <option value="cat">By category</option><option value="rating">Highest rated</option><option value="worn">Most worn</option>
+      <option value="cat">By category</option><option value="brand">By brand</option><option value="rating">Highest rated</option><option value="worn">Most worn</option>
       <option value="least">Least worn</option><option value="cpw">Lowest cost per wear</option><option value="paid">Most paid</option>
     </select></div>
   <div class="chips scroll" id="chips-closet" role="group" aria-label="Filter by category"></div>
@@ -453,6 +453,7 @@ function renderLog(){
 function sortItems(items,mode){
   var cmp={
     cat:function(a,b){return catIdx(a.cat)-catIdx(b.cat)||(a.subs&&a.subs[0]||"").localeCompare(b.subs&&b.subs[0]||"")||a.name.localeCompare(b.name)},
+    brand:byBrandName,
     rating:function(a,b){return (b.rating||0)-(a.rating||0)||byBrandName(a,b)},
     worn:function(a,b){return wearsOf(b)-wearsOf(a)||byBrandName(a,b)},
     least:function(a,b){return wearsOf(a)-wearsOf(b)||byBrandName(a,b)},
@@ -491,11 +492,12 @@ function renderCloset(){
   if(!closet.length){el.innerHTML=state.dbMsg?emptyBox("No data to show",state.dbMsg):emptyBox("Your closet is empty","Tap + Add piece to start.");return}
   if(!items.length){el.innerHTML=emptyBox("Nothing here","No pieces match.");return}
   sortItems(items,state.sort);
-  if(state.sort!=="cat"||state.closetCat!=="All"){
+  var byBrand=state.sort==="brand";
+  if(!byBrand&&(state.sort!=="cat"||state.closetCat!=="All")){
     el.innerHTML='<div class="grid3">'+items.map(tileHtml).join("")+'</div>';bindTiles(el);return;
   }
   var groups={},order=[];
-  items.forEach(function(i){var k=i.cat||"Other";if(!groups[k]){groups[k]=[];order.push(k)}groups[k].push(i)});
+  items.forEach(function(i){var k=(byBrand?i.brand:i.cat)||"Other";if(!groups[k]){groups[k]=[];order.push(k)}groups[k].push(i)});
   el.innerHTML=order.map(function(k){
     return '<div class="group"><div class="ghead"><h2>'+esc(k)+'</h2><span>'+groups[k].length+'</span></div><div class="grid3" style="padding-top:10px">'+groups[k].map(tileHtml).join("")+'</div></div>';
   }).join("");
