@@ -107,6 +107,14 @@ button{font:inherit}
 .thumb.empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;border-style:dashed}
 .row .lead{display:flex;gap:10px;min-width:0;align-items:flex-start}
 .stars{color:var(--warn);font-size:12px;letter-spacing:1px;white-space:nowrap}
+.buys{display:flex;flex-direction:column;gap:8px}
+.buy{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.buyrow{display:grid;grid-template-columns:64px 14px 1fr 40px;gap:8px;align-items:center}
+.buyrow .buyx{background:none;border:0;color:var(--muted);cursor:pointer;font-size:22px;line-height:1;min-height:40px}
+.buyret{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.buyret .chip{min-width:44px;min-height:40px;font-size:18px;line-height:1}
+.buyret .chip:disabled{opacity:.35;cursor:default}
+.buyret b{color:var(--ink);font-weight:600;min-width:52px;text-align:center}
 .field{display:flex;flex-direction:column;gap:4px}.flabel{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.03em;text-transform:uppercase}
 .starpick{display:flex;gap:4px}
 .starpick button{background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:22px;line-height:1;padding:6px 10px;color:var(--muted);cursor:pointer}
@@ -262,16 +270,16 @@ header.top{padding-block:10px 6px}
       <span class="note" id="wear-msg"></span>
     </div>
     <label>Name<input id="f-name" required></label>
-    <div class="grid2">
-      <label>Brand<input id="f-brand" list="brand-list"></label>
-      <label>Price paid<input id="f-paid" inputmode="decimal" placeholder="$"></label>
-    </div>
+    <label>Brand<input id="f-brand" list="brand-list"></label>
     <div class="field"><span class="flabel">How much I like it</span><div class="starpick" id="f-rating" role="group" aria-label="Rating"></div></div>
     <div class="grid2">
       <label>Size that fits<input id="f-size" placeholder="XL, 36x30, 11.5"></label>
       <label>Category<select id="f-cat"></select></label>
     </div>
-    <label>How many do I own<input id="f-qty" inputmode="numeric" placeholder="1"></label>
+    <div class="field"><span class="flabel">Purchases (price history)</span>
+      <div class="buys" id="f-buys"></div>
+      <button type="button" class="btn ghost" id="buy-add">+ Add another purchase</button>
+      <span class="note" id="buys-note"></span></div>
     <div class="field"><span class="flabel">Where I wear it</span><div class="chips" id="f-uses" role="group" aria-label="Where I wear it"></div></div>
     <div class="field" id="how-field"><span class="flabel">How I wear it</span><div class="chips" id="f-uses2" role="group" aria-label="How I wear it"></div><span class="note" id="how-note"></span></div>
     <div class="field"><span class="flabel">Best seasons</span><div class="chips" id="f-seasons" role="group" aria-label="Best seasons"></div></div>
@@ -335,7 +343,7 @@ var CATS=["T-Shirts","Button Downs","Polos","Long Sleeves","Sweaters","Activewea
 function catIdx(c){var i=CATS.indexOf(c);return i<0?99:i}
 var OCC=["Work day","Casual weekend","Dinner out","Travel day","Cold, 40s","Hot, 85+"];
 var state={selecting:false,sel:{},mode:"mix",fillShot:"",items:[],wears:[],ws:{},view:"closet",logFilter:"known",closetCat:"All",sort:"cat",loaded:false,rules:"",editing:null,occ:"",
-  sheet:{id:null,rating:null,photo:null,removePhoto:false,look:""},w:{mode:"outfit",sel:{}}};
+  sheet:{id:null,rating:null,photo:null,removePhoto:false,look:"",lines:[]},w:{mode:"outfit",sel:{}}};
 var $=function(id){return document.getElementById(id)};
 
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -356,7 +364,14 @@ function itemById(id){return state.items.filter(function(i){return i.id===id})[0
 function itemName(id){var i=itemById(id);return i?label(i):null}
 function wearsOf(it){return (state.ws[it.id]&&state.ws[it.id].n)||0}
 function qtyOf(it){return it.qty>1?it.qty:1}
-function cpwOf(it){var n=wearsOf(it);return(it.paid>0&&n>0)?it.paid*qtyOf(it)/n:null}
+/* Purchase history. Pieces saved before this existed have one virtual line built from qty and paid. */
+function linesOf(it){
+  if(it.purchases&&it.purchases.length)return it.purchases;
+  return [{id:"p0",n:qtyOf(it),price:it.paid!=null?it.paid:null,date:"",retired:0}];
+}
+function spentOf(it){var t=0;linesOf(it).forEach(function(p){if(p.price>0)t+=p.n*p.price});return t}
+function ownedSpendOf(it){var t=0;linesOf(it).forEach(function(p){if(p.price>0)t+=(p.n-p.retired)*p.price});return t}
+function cpwOf(it){var n=wearsOf(it),sp=spentOf(it);return(sp>0&&n>0)?sp/n:null}
 function photoUrl(it,full){return "/api/photo/"+encodeURIComponent(it.id)+"?v="+it.photoV+(full?"&size=full":"")}
 
 /* ---------- storage (Cloudflare D1 through /api) ---------- */
@@ -540,7 +555,7 @@ function renderWears(){
   var owned=state.items.filter(function(i){return i.status==="closet"});
   var worn=owned.filter(function(i){return wearsOf(i)>0}),never=owned.filter(function(i){return wearsOf(i)===0});
   var total=0;state.wears.forEach(function(w){total+=w.count*w.itemIds.length});
-  var spent=0,spentWorn=0;owned.forEach(function(i){if(i.paid>0){spent+=i.paid*qtyOf(i);if(wearsOf(i)>0)spentWorn+=i.paid*qtyOf(i)}});
+  var spent=0,spentWorn=0;owned.forEach(function(i){var o=ownedSpendOf(i);if(o>0){spent+=o;if(wearsOf(i)>0)spentWorn+=o}});
   var html='<p class="note" style="margin:0">'+worn.length+' pieces worn · '+never.length+' never worn'+(spent?' · '+esc(money2(spent))+' paid for what you own':'')+'</p>';
   var ranked=owned.filter(function(i){return cpwOf(i)!=null}).sort(function(a,b){return cpwOf(a)-cpwOf(b)});
   if(ranked.length){
@@ -655,16 +670,65 @@ function refreshSheetStats(){
   if($("sheet-back").hidden||!state.editing)return;
   var it=itemById(state.editing);if(!it)return;
   var n=wearsOf(it),c=cpwOf(it),last=state.ws[it.id]&&state.ws[it.id].last;
-  var paidNow=num($("f-paid").value);
-  var qn=parseInt($("f-qty").value,10)||1;var cp=(paidNow>0&&n>0)?paidNow*qn/n:null;
+  var sp=0;state.sheet.lines.forEach(function(p){if(p.price>0)sp+=p.n*p.price});
+  var cp=(sp>0&&n>0)?sp/n:null;
   $("wear-stats").innerHTML='<span><b>'+n+'</b> '+(n===1?"wear":"wears")+'</span><span><b>'+(cp!=null?money2(cp):"—")+'</b> per wear</span>'+(last?'<span>last worn <b>'+esc(niceDate(last))+'</b></span>':'');
+}
+function newPid(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function renderBuys(){
+  var L=state.sheet.lines;
+  $("f-buys").innerHTML=L.map(function(p,i){
+    return '<div class="buy" data-i="'+i+'"><div class="buyrow">'+
+      '<input class="b-n" inputmode="numeric" aria-label="How many" placeholder="1" value="'+(p.n>1?p.n:"")+'">'+
+      '<span aria-hidden="true">×</span>'+
+      '<input class="b-p" inputmode="decimal" aria-label="Price each" placeholder="$ each" value="'+(p.price!=null?esc(p.price):"")+'">'+
+      '<button type="button" class="buyx" aria-label="Remove this purchase"'+(L.length<2?' hidden':'')+'>×</button></div>'+
+      '<input class="b-d" type="date" aria-label="Date bought" value="'+esc(p.date)+'">'+
+      '<div class="buyret" hidden><span>Retired</span><button type="button" class="chip b-rm" aria-label="Restore one">−</button><b></b><button type="button" class="chip b-rp" aria-label="Retire one">+</button></div>'+
+    '</div>';
+  }).join("");
+  syncBuys();
+}
+/* Updates the retire counters in place, so typing in a field is never interrupted by a redraw. */
+function syncBuys(){
+  var L=state.sheet.lines,own=0,all=0;
+  L.forEach(function(p){own+=p.n-p.retired;all+=p.n});
+  var multi=all>1;
+  Array.prototype.forEach.call($("f-buys").querySelectorAll(".buy"),function(row){
+    var p=L[+row.dataset.i];if(!p)return;
+    var r=row.querySelector(".buyret");r.hidden=!multi;
+    r.querySelector("b").textContent=p.retired+" of "+p.n;
+    r.querySelector(".b-rm").disabled=p.retired<1;
+    r.querySelector(".b-rp").disabled=p.retired>=p.n||own<=1;
+  });
+  $("buys-note").textContent=multi?own+" owned"+(all>own?", "+(all-own)+" retired":"")+(own<=1?". To retire the last one, set Status to Retired.":""):"";
+}
+function buyEdit(ev){
+  var row=ev.target.closest&&ev.target.closest(".buy");if(!row)return;
+  var p=state.sheet.lines[+row.dataset.i];if(!p)return;
+  var c=ev.target.classList;
+  if(c.contains("b-n")){p.n=Math.min(99,Math.max(1,parseInt(ev.target.value,10)||1));if(p.retired>p.n)p.retired=p.n;syncBuys()}
+  else if(c.contains("b-p"))p.price=num(ev.target.value);
+  else if(c.contains("b-d"))p.date=ev.target.value||"";
+  refreshSheetStats();
+}
+function buyClick(ev){
+  var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+  var row=b.closest(".buy");if(!row)return;
+  var L=state.sheet.lines,i=+row.dataset.i,p=L[i];if(!p)return;
+  if(b.classList.contains("b-rp")&&p.retired<p.n)p.retired++;
+  else if(b.classList.contains("b-rm")&&p.retired>0)p.retired--;
+  else if(b.classList.contains("buyx")&&L.length>1)L.splice(i,1);
+  else return;
+  renderBuys();refreshSheetStats();
 }
 function openSheet(id,preset){
   var it=id?itemById(id):null;
   if(id&&!it)return;
   state.editing=it?it.id:null;
   var d=it||preset||{status:"try"};
-  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),seasons:(d.seasons||[]).slice(),photo:null,removePhoto:false};
+  state.sheet={id:it?it.id:newId(),rating:d.rating||null,uses:(d.uses||[]).slice(),seasons:(d.seasons||[]).slice(),photo:null,removePhoto:false,
+    lines:it?linesOf(it).map(function(p){return {id:p.id,n:p.n,price:p.price,date:p.date||"",retired:p.retired||0}}):[{id:newPid(),n:1,price:null,date:d.status==="closet"?today():"",retired:0}]};
   $("sheet-title").textContent=it?(it.status==="closet"?"Edit piece":"Edit style"):(d.status==="closet"?"Add a piece":"Add a style");
   fillSelect($("f-cat"),[["","Choose"]].concat(CATS.map(function(c){return [c,c]})));
   fillSelect($("f-status"),Object.keys(STATUS).map(function(k){return [k,STATUS[k]]}));
@@ -673,14 +737,14 @@ function openSheet(id,preset){
   $("bought-list").innerHTML=Object.keys(buys).map(function(b){return '<option value="'+esc(b)+'">'}).join("");
   $("brand-list").innerHTML=Object.keys(brands).sort().map(function(b){return '<option value="'+esc(b)+'">'}).join("");
   $("f-name").value=d.name||"";$("f-brand").value=d.brand||"";$("f-cat").value=d.cat||"";$("f-status").value=d.status||"try";
-  $("f-size").value=d.size||"";$("f-max").value=d.maxPrice!=null?d.maxPrice:"";$("f-paid").value=d.paid!=null?d.paid:"";
+  $("f-size").value=d.size||"";$("f-max").value=d.maxPrice!=null?d.maxPrice:"";
   $("f-colors").value=(d.colors||[]).join(", ");$("f-subs").value=(d.subs||[]).join(", ");$("f-fabric").value=d.fabric||"";$("f-bought").value=d.bought||"";$("f-note").value=d.note||"";
-  $("f-look").value=d.look||"";$("f-qty").value=d.qty>1?d.qty:"";
+  $("f-look").value=d.look||"";
   $("f-del").hidden=!it;$("f-del").textContent="Delete";$("f-del").dataset.armed="";
   $("sheet-err").textContent="";$("fill-msg").textContent="";$("fill-text").value="";$("describe-msg").textContent="";$("wear-msg").textContent="";$("past-n").value="";
   state.fillShot="";$("fill-box").hidden=!!it;
   $("wear-box").hidden=!it;
-  renderRatingPick();renderUsesPick();renderSeasonPick();renderPhotoBox();
+  renderRatingPick();renderUsesPick();renderSeasonPick();renderBuys();renderPhotoBox();
   $("sheet-back").hidden=false;refreshSheetStats();
   if(!it)setTimeout(function(){$(d.name?"f-name":"fill-text").focus()},30);
 }
@@ -688,9 +752,15 @@ function closeSheet(){$("sheet-back").hidden=true;state.editing=null}
 function readSheet(){
   var d={name:$("f-name").value.trim(),brand:$("f-brand").value.trim(),cat:$("f-cat").value,status:$("f-status").value,
     size:$("f-size").value.trim(),colors:listOf($("f-colors").value),subs:listOf($("f-subs").value),fabric:$("f-fabric").value.trim(),bought:$("f-bought").value.trim(),note:$("f-note").value.trim(),
-    look:$("f-look").value.trim(),rating:state.sheet.rating,qty:parseInt($("f-qty").value,10)||1,seasons:state.sheet.seasons.slice(),uses:state.sheet.uses.filter(function(u){return USES_WHERE.indexOf(u)>-1||howOptions().indexOf(u)>-1})};
-  var mx=num($("f-max").value),pd=num($("f-paid").value);
-  if(mx!=null)d.maxPrice=mx;if(pd!=null)d.paid=pd;
+    look:$("f-look").value.trim(),rating:state.sheet.rating,seasons:state.sheet.seasons.slice(),uses:state.sheet.uses.filter(function(u){return USES_WHERE.indexOf(u)>-1||howOptions().indexOf(u)>-1})};
+  var mx=num($("f-max").value);if(mx!=null)d.maxPrice=mx;
+  var own=0,pieces=0,spent=0;
+  var notBought=d.status==="try"||d.status==="passed";
+  d.purchases=state.sheet.lines.filter(function(p){return !notBought||p.price!=null}).map(function(p){
+    own+=p.n-p.retired;if(p.price!=null){pieces+=p.n;spent+=p.n*p.price}
+    return {id:p.id,n:p.n,price:p.price,date:p.date,retired:p.retired};
+  });
+  d.qty=Math.max(1,own);if(pieces)d.paid=Math.round(spent/pieces*100)/100;
   var cur=state.editing&&itemById(state.editing);if(cur&&cur.url)d.url=cur.url;
   return d;
 }
@@ -875,7 +945,13 @@ $("f-photo").onchange=function(){pickPhoto(this.files&&this.files[0]);this.value
 $("p-remove").onclick=function(){state.sheet.photo=null;state.sheet.removePhoto=true;renderPhotoBox()};
 $("p-describe").onclick=function(){describePhoto(state.editing,false)};
 $("f-cat").addEventListener("change",renderUsesPick);
-$("f-paid").addEventListener("input",refreshSheetStats);$("f-qty").addEventListener("input",refreshSheetStats);
+$("f-buys").addEventListener("input",buyEdit);
+$("f-buys").addEventListener("click",buyClick);
+$("buy-add").onclick=function(){
+  state.sheet.lines.push({id:newPid(),n:1,price:null,date:today(),retired:0});
+  renderBuys();refreshSheetStats();
+  var ps=$("f-buys").querySelectorAll(".b-p");if(ps.length)ps[ps.length-1].focus();
+};
 $("wore-today").onclick=function(){
   if(!state.editing)return;var b=this;b.disabled=true;
   addWear({itemIds:[state.editing],kind:"outfit",date:today(),count:1}).then(function(){$("wear-msg").textContent="Logged for today."}).catch(function(e){$("wear-msg").textContent=errCopy(e)}).then(function(){b.disabled=false});

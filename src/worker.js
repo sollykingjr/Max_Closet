@@ -15,6 +15,33 @@ function normalizeUses(list) {
 }
 const SEASONS = ["Spring", "Summer", "Fall", "Winter"];
 const cleanSeasons = (list) => SEASONS.filter((s) => (Array.isArray(list) ? list : []).includes(s));
+// Purchase history: lines like "2 x $14 bought on a date", each with a count of how many of that line are retired.
+const cleanPurchases = (list) => {
+  const out = (Array.isArray(list) ? list : []).slice(0, 40).map((p, i) => {
+    p = p && typeof p === "object" ? p : {};
+    const n = Math.min(99, Math.max(1, parseInt(p.n, 10) || 1));
+    const price = numOrNull(p.price);
+    return {
+      id: str(p.id, 30) || "p" + i,
+      n,
+      price: price != null && price >= 0 ? price : null,
+      date: typeof p.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.date) ? p.date : "",
+      retired: Math.min(n, Math.max(0, parseInt(p.retired, 10) || 0)),
+    };
+  }).filter((p) => p.price != null || p.date || p.n > 1 || p.retired > 0);
+  // You can retire some copies but not every one (retire the whole piece with its Status instead).
+  const owned = out.reduce((a, p) => a + p.n - p.retired, 0);
+  if (out.length && owned < 1) { const l = out[out.length - 1]; l.retired = Math.max(0, l.n - 1); }
+  return out;
+};
+const summarizePurchases = (lines) => {
+  let owned = 0, pieces = 0, spent = 0;
+  for (const p of lines) {
+    owned += p.n - p.retired;
+    if (p.price != null) { pieces += p.n; spent += p.n * p.price; }
+  }
+  return { qty: Math.min(99, Math.max(1, owned)), paid: pieces ? Math.round((spent / pieces) * 100) / 100 : null };
+};
 const STATUSES = ["closet", "approved", "try", "passed", "retired"];
 const CATS = ["T-Shirts", "Button Downs", "Polos", "Long Sleeves", "Sweaters", "Activewear", "Pants", "Shorts", "Outerwear", "Blazer", "Shoes", "Accessories", "Bathing Suit", "Socks"];
 
@@ -78,6 +105,7 @@ function toItem(r) {
     qty: r.qty || 1,
     uses: normalizeUses(JSON.parse(r.uses || "[]")),
     seasons: cleanSeasons(JSON.parse(r.seasons || "[]")),
+    purchases: cleanPurchases(JSON.parse(r.purchases || "[]")),
     photoV: r.photo_v || null,
   };
 }
@@ -89,6 +117,11 @@ function cleanItem(id, b) {
   const status = STATUSES.includes(b.status) ? b.status : "try";
   const cat0 = migrateCat(b.cat, b.subs);
   const cat = CATS.includes(cat0) ? cat0 : "";
+  // null = the client did not send purchase lines (older page): keep whatever is stored.
+  const purchases = Array.isArray(b.purchases) ? cleanPurchases(b.purchases) : null;
+  let qty = Math.min(99, Math.max(1, parseInt(b.qty, 10) || 1));
+  let paid = numOrNull(b.paid);
+  if (purchases && purchases.length) ({ qty, paid } = summarizePurchases(purchases));
   return {
     id,
     name,
@@ -98,7 +131,7 @@ function cleanItem(id, b) {
     colors: strList(b.colors),
     size: str(b.size, 40),
     status,
-    paid: numOrNull(b.paid),
+    paid,
     max_price: numOrNull(b.maxPrice),
     fabric: str(b.fabric, 200),
     note: str(b.note, 1000),
@@ -106,9 +139,10 @@ function cleanItem(id, b) {
     rating: ratingOrNull(b.rating),
     look: str(b.look, 600),
     bought: str(b.bought, 100),
-    qty: Math.min(99, Math.max(1, parseInt(b.qty, 10) || 1)),
+    qty,
     uses: normalizeUses(b.uses),
     seasons: cleanSeasons(b.seasons),
+    purchases,
   };
 }
 const ratingOrNull = (v) => {
@@ -116,14 +150,14 @@ const ratingOrNull = (v) => {
   return n >= 1 && n <= 5 ? n : null;
 };
 
-const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","bought","qty","uses","seasons","updated_at"];
+const COLS = ["id","name","brand","cat","subs","colors","size","status","paid","max_price","fabric","note","url","rating","look","bought","qty","uses","seasons","purchases","updated_at"];
 const UPSERT =
   "INSERT INTO items (" + COLS.join(",") + ") VALUES (" + COLS.map(() => "?").join(",") + ") " +
   "ON CONFLICT(id) DO UPDATE SET " + COLS.slice(1).map((c) => c + "=excluded." + c).join(",");
 
 const itemBinds = (c) => [
   c.id, c.name, c.brand, c.cat, JSON.stringify(c.subs), JSON.stringify(c.colors), c.size, c.status,
-  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, c.bought, c.qty, JSON.stringify(c.uses), JSON.stringify(c.seasons), Date.now(),
+  c.paid, c.max_price, c.fabric, c.note, c.url, c.rating, c.look, c.bought, c.qty, JSON.stringify(c.uses), JSON.stringify(c.seasons), JSON.stringify(c.purchases || []), Date.now(),
 ];
 const upsertStmt = (env, c) => env.DB.prepare(UPSERT).bind(...itemBinds(c));
 
@@ -156,6 +190,7 @@ async function init(env) {
   if (!have.has("look")) await env.DB.prepare("ALTER TABLE items ADD COLUMN look TEXT").run();
   if (!have.has("seasons")) await env.DB.prepare("ALTER TABLE items ADD COLUMN seasons TEXT").run();
   if (!have.has("bought")) await env.DB.prepare("ALTER TABLE items ADD COLUMN bought TEXT").run();
+  if (!have.has("purchases")) await env.DB.prepare("ALTER TABLE items ADD COLUMN purchases TEXT").run();
 
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
   if (seeded) {
@@ -560,6 +595,10 @@ async function handleApi(request, env, url) {
       const body = await request.json().catch(() => null);
       const c = cleanItem(id, body);
       if (!c) return fail(400, "Give it a name.");
+      if (c.purchases === null) {
+        const old = await env.DB.prepare("SELECT purchases FROM items WHERE id=?").bind(id).first();
+        c.purchases = cleanPurchases(JSON.parse((old && old.purchases) || "[]"));
+      }
       await upsertStmt(env, c).run();
       const row = await env.DB.prepare(
         "SELECT items.*, (SELECT updated_at FROM photos WHERE item_id = items.id) AS photo_v FROM items WHERE id=?"
